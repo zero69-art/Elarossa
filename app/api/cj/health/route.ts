@@ -1,0 +1,4 @@
+import { NextResponse } from "next/server";
+export async function GET() {
+  return NextResponse.json({ configured: Boolean(process.env.CJ_ACCESS_TOKEN), service: "CJdropshipping" });
+}
