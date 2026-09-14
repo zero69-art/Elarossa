@@ -14,20 +14,56 @@ async function resolveProduct(slug: string) {
   try {
     const response = await getCJProduct(pid);
     const rows = getCJProductRows({ data: response?.data ?? response });
-    const row = rows[0] ?? response?.data;
+    const row = rows[0];
     if (!row) return undefined;
-    return toCJStoreProduct({ ...row, pid:String(row.pid ?? pid), productNameEn:String(row.productNameEn ?? row.nameEn ?? row.productName ?? "CJ Product"), bigImage:row.bigImage ?? row.productImage, productImageSet:row.productImageSet ?? [], variants:row.variants ?? response?.data?.variants ?? [] });
-  } catch { return undefined; }
+
+    const raw = row as Record<string, unknown>;
+    const variants = Array.isArray(raw.variants)
+      ? raw.variants
+      : Array.isArray(response?.data?.variants)
+        ? response.data.variants
+        : [];
+    const image = typeof raw.bigImage === "string"
+      ? raw.bigImage
+      : typeof raw.productImage === "string"
+        ? raw.productImage
+        : undefined;
+    const imageSet = Array.isArray(raw.productImageSet)
+      ? raw.productImageSet.filter((value): value is string => typeof value === "string")
+      : [];
+
+    return toCJStoreProduct({
+      ...row,
+      pid: String(raw.pid ?? pid),
+      productNameEn: String(raw.productNameEn ?? raw.nameEn ?? raw.productName ?? "CJ Product"),
+      bigImage: image,
+      productImageSet: imageSet,
+      variants: variants as Array<Record<string, unknown>>,
+    });
+  } catch {
+    return undefined;
+  }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug:string }> }): Promise<Metadata> {
-  const { slug } = await params; const product = await resolveProduct(slug); if (!product) return {};
-  return { title:`${product.name} | Elarossa`, description:product.description, alternates:{canonical:`/products/${product.slug}`}, openGraph:{title:`${product.name} | Elarossa`,description:product.description,images:[product.image]} };
+  const { slug } = await params;
+  const product = await resolveProduct(slug);
+  if (!product) return {};
+  return {
+    title: `${product.name} | Elarossa`,
+    description: product.description,
+    alternates: { canonical: `/products/${product.slug}` },
+    openGraph: { title: `${product.name} | Elarossa`, description: product.description, images: [product.image] },
+  };
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ slug:string }> }) {
-  const { slug } = await params; const product = await resolveProduct(slug); if (!product) notFound();
-  const margin = getMargin(product); const gallery = product.gallery.length ? product.gallery.slice(0,4) : [product.image];
+  const { slug } = await params;
+  const product = await resolveProduct(slug);
+  if (!product) notFound();
+  const margin = getMargin(product);
+  const gallery = product.gallery.length ? product.gallery.slice(0,4) : [product.image];
+
   return <main className="min-h-screen">
     <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-5 sm:px-6 sm:py-7"><Link href="/" className="serif text-xl tracking-[.12em] sm:text-3xl">ELAROSSA</Link><div className="flex gap-4 text-[10px] tracking-[.18em] sm:gap-5 sm:text-xs"><Link href="/products">SHOP</Link><Link href="/cart">BAG</Link></div></nav>
     <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 sm:pb-20 md:px-8">
