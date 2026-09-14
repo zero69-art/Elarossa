@@ -1,0 +1,3 @@
+export default function ReturnsPage() {
+  return <main className="mx-auto max-w-3xl px-6 py-16"><a href="/" className="text-xs tracking-[.3em]">ELAROSSA</a><h1 className="serif mt-10 text-5xl">Returns</h1><p className="mt-6 text-sm leading-7 opacity-70">Return eligibility, time limits and exclusions will be displayed clearly before purchase. Apparel returns will be subject to hygiene, condition and applicable consumer-law requirements.</p><h2 className="mt-10 text-lg">Before launch</h2><p className="mt-3 text-sm leading-7 opacity-70">The final return workflow must be aligned with the fulfillment supplier, destination-country consumer rules and the payment provider before Elarossa accepts live orders.</p></main>;
+}
