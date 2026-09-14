@@ -8,10 +8,11 @@
     "start": "next start"
   },
   "dependencies": {
-    "next": "latest",
+    "next": "16.3.3",
     "react": "latest",
     "react-dom": "latest",
-    "lucide-react": "latest"
+    "lucide-react": "latest",
+    "stripe": "latest"
   },
   "devDependencies": {
     "@types/node": "latest",
