@@ -1,8 +1,10 @@
 import type { MetadataRoute } from "next";
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://elarossa.vercel.app";
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [{ userAgent: "*", allow: "/", disallow: ["/api/", "/checkout/"] }],
-    sitemap: "https://elarossa.com/sitemap.xml"
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

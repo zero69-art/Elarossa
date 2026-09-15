@@ -1,3 +1,15 @@
 export default function TermsPage() {
-  return <main className="mx-auto max-w-3xl px-6 py-16"><a href="/" className="text-xs tracking-[.3em]">ELAROSSA</a><h1 className="serif mt-10 text-5xl">Terms & Conditions</h1><p className="mt-6 text-sm leading-7 opacity-70">By using Elarossa, customers agree to the store terms presented at checkout. Product descriptions, pricing, availability, shipping estimates and promotional terms may change before an order is confirmed.</p><h2 className="mt-10 text-lg">Product quality</h2><p className="mt-3 text-sm leading-7 opacity-70">Elarossa will not treat a supplier listing as quality-approved until the product has been independently sampled and reviewed for fit, materials, finish, packaging and delivery performance.</p><p className="mt-10 text-xs opacity-50">This page is a pre-launch legal placeholder and should receive jurisdiction-specific legal review before production sales.</p></main>;
+  return <main className="mx-auto max-w-3xl px-6 py-16">
+    <a href="/" className="text-xs tracking-[.3em]">ELAROSSA</a>
+    <h1 className="serif mt-10 text-5xl">Terms & Conditions</h1>
+    <p className="mt-6 text-sm leading-7 opacity-70">These terms apply to purchases made through Elarossa. Product availability, pricing, promotions and delivery estimates may change before an order is accepted and paid.</p>
+    <h2 className="mt-10 text-lg">Products and pricing</h2>
+    <p className="mt-3 text-sm leading-7 opacity-70">Product descriptions, images, sizes and colours are provided for customer selection. Prices are displayed in US dollars at checkout. Elarossa may correct obvious pricing or catalogue errors before accepting an order.</p>
+    <h2 className="mt-10 text-lg">Orders and payment</h2>
+    <p className="mt-3 text-sm leading-7 opacity-70">Payment is processed through the configured payment provider. An order is subject to successful payment and any applicable availability checks.</p>
+    <h2 className="mt-10 text-lg">Quality and supplier products</h2>
+    <p className="mt-3 text-sm leading-7 opacity-70">Supplier catalogue information is not, by itself, a quality certification. Elarossa's product catalogue is being developed with a sample-review process covering fit, materials, finish, packaging and delivery performance.</p>
+    <h2 className="mt-10 text-lg">Consumer rights</h2>
+    <p className="mt-3 text-sm leading-7 opacity-70">Nothing in these terms is intended to remove or limit mandatory consumer rights that apply in the customer's country.</p>
+  </main>;
 }

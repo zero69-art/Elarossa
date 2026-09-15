@@ -1,3 +1,11 @@
 export default function ReturnsPage() {
-  return <main className="mx-auto max-w-3xl px-6 py-16"><a href="/" className="text-xs tracking-[.3em]">ELAROSSA</a><h1 className="serif mt-10 text-5xl">Returns</h1><p className="mt-6 text-sm leading-7 opacity-70">Return eligibility, time limits and exclusions will be displayed clearly before purchase. Apparel returns will be subject to hygiene, condition and applicable consumer-law requirements.</p><h2 className="mt-10 text-lg">Before launch</h2><p className="mt-3 text-sm leading-7 opacity-70">The final return workflow must be aligned with the fulfillment supplier, destination-country consumer rules and the payment provider before Elarossa accepts live orders.</p></main>;
+  return <main className="mx-auto max-w-3xl px-6 py-16">
+    <a href="/" className="text-xs tracking-[.3em]">ELAROSSA</a>
+    <h1 className="serif mt-10 text-5xl">Returns</h1>
+    <p className="mt-6 text-sm leading-7 opacity-70">Return eligibility depends on the product, destination and applicable consumer law. Items must be returned in the condition required by the applicable return policy, and hygiene-sensitive items may have additional restrictions where permitted by law.</p>
+    <h2 className="mt-10 text-lg">Before ordering</h2>
+    <p className="mt-3 text-sm leading-7 opacity-70">Please review the product description, size and colour selection before payment. The final return instructions supplied with your order take priority for that purchase.</p>
+    <h2 className="mt-10 text-lg">Refunds</h2>
+    <p className="mt-3 text-sm leading-7 opacity-70">Approved refunds are returned through the original payment method. Processing time can vary between Elarossa, the payment provider and the customer's bank.</p>
+  </main>;
 }
