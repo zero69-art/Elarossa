@@ -4,7 +4,7 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://elarossa.vercel.app
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/api/", "/checkout/"] }],
+    rules: [{ userAgent: "*", allow: "/", disallow: ["/api/", "/checkout/", "/admin/"] }],
     sitemap: `${baseUrl}/sitemap.xml`,
   };
 }
