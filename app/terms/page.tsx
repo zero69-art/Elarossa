@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Terms & Conditions",
+  description: "The terms that apply to purchases made through Elarossa.",
+};
+
 export default function TermsPage() {
   return <main className="mx-auto max-w-3xl px-6 py-16">
     <a href="/" className="text-xs tracking-[.3em]">ELAROSSA</a>
