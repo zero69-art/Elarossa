@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { products } from "@/lib/products";
+import CartBadge from "@/components/CartBadge";
 
 const collections = [
   { title: "Active", text: "Sculpted essentials for movement and studio days.", href: "/products?q=activewear", image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=900&q=85" },
@@ -14,7 +15,7 @@ export default function Home() {
     <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-5 sm:px-6 sm:py-7">
       <Link href="/products" className="text-[10px] tracking-[.25em] sm:text-xs">SHOP</Link>
       <Link href="/" className="serif text-xl tracking-[.12em] sm:text-3xl">ELAROSSA</Link>
-      <div className="flex items-center gap-3 text-[10px] tracking-[.16em] sm:gap-5 sm:text-xs sm:tracking-[.2em]"><Link href="/products" className="hidden sm:inline">DISCOVER</Link><Link href="/cart">BAG</Link></div>
+      <div className="flex items-center gap-3 text-[10px] tracking-[.16em] sm:gap-5 sm:text-xs sm:tracking-[.2em]"><Link href="/products" className="hidden sm:inline">DISCOVER</Link><Link href="/cart">BAG<CartBadge /></Link></div>
     </nav>
 
     <section className="mx-3 overflow-hidden rounded-[1.5rem] bg-[#dfd2cc] sm:mx-6 sm:rounded-[2rem] md:mx-8">

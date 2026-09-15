@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { products } from "@/lib/products";
+import CartBadge from "@/components/CartBadge";
 
 export const metadata: Metadata = {
   title: "Shop Women's Essentials | Elarossa",
@@ -29,7 +30,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Sea
     <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-5 sm:px-6 sm:py-7">
       <Link href="/" className="serif text-xl tracking-[.12em] sm:text-3xl">ELAROSSA</Link>
       <div className="flex gap-4 text-[10px] tracking-[.18em] sm:gap-5 sm:text-xs">
-        <Link href="/">HOME</Link><Link href="/cart">BAG</Link>
+        <Link href="/">HOME</Link><Link href="/cart">BAG<CartBadge /></Link>
       </div>
     </nav>
     <header className="mx-auto max-w-7xl px-4 pb-8 pt-8 sm:px-6 sm:pb-10 sm:pt-10 md:px-8">

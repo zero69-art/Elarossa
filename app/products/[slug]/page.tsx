@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getProduct } from "@/lib/products";
 import AddToBag from "@/components/AddToBag";
+import CartBadge from "@/components/CartBadge";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -24,7 +25,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const gallery = product.gallery.length ? product.gallery.slice(0, 4) : [product.image];
 
   return <main className="min-h-screen">
-    <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-5 sm:px-6 sm:py-7"><Link href="/" className="serif text-xl tracking-[.12em] sm:text-3xl">ELAROSSA</Link><div className="flex gap-4 text-[10px] tracking-[.18em] sm:gap-5 sm:text-xs"><Link href="/products">SHOP</Link><Link href="/cart">BAG</Link></div></nav>
+    <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-5 sm:px-6 sm:py-7"><Link href="/" className="serif text-xl tracking-[.12em] sm:text-3xl">ELAROSSA</Link><div className="flex gap-4 text-[10px] tracking-[.18em] sm:gap-5 sm:text-xs"><Link href="/products">SHOP</Link><Link href="/cart">BAG<CartBadge /></Link></div></nav>
     <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 sm:pb-20 md:px-8">
       <Link href="/products" className="text-[10px] tracking-[.18em] opacity-55">← BACK TO EDIT</Link>
       <section className="mt-7 grid gap-8 md:mt-10 md:grid-cols-2 md:gap-12">
