@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+
+// Internal supplier health must not be exposed publicly.
 export async function GET() {
-  return NextResponse.json({ configured: Boolean(process.env.CJ_ACCESS_TOKEN), service: "CJdropshipping" });
+  return NextResponse.json({ error: "Not found" }, { status: 404 });
 }
