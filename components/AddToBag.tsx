@@ -3,15 +3,14 @@ import { useState } from "react";
 import type { Product } from "@/lib/products";
 
 const KEY = "elarossa-cart";
-
 type Props = { product: Product; storeLive?: boolean };
 
 export default function AddToBag({ product, storeLive = false }: Props) {
-  const [size, setSize] = useState(product.sizes[0] ?? "One Size");
-  const [color, setColor] = useState(product.colors[0] ?? "Default");
-  const [added, setAdded] = useState(false);
   const sizes = product.sizes.length ? product.sizes : ["One Size"];
   const colors = product.colors.length ? product.colors : ["Default"];
+  const [size, setSize] = useState(sizes[0]);
+  const [color, setColor] = useState(colors[0]);
+  const [added, setAdded] = useState(false);
 
   function add() {
     if (!storeLive || product.qualityStatus !== "approved") return;
@@ -30,11 +29,10 @@ export default function AddToBag({ product, storeLive = false }: Props) {
   }
 
   const purchasable = storeLive && product.qualityStatus === "approved";
-
   return <div className="mt-7 sm:mt-8">
-    <div><p className="text-[10px] tracking-[.2em]">SIZE</p><div className="mt-3 flex flex-wrap gap-2">{sizes.map(x => <button type="button" key={x} aria-pressed={size === x} onClick={() => setSize(x)} className={`min-h-11 border px-4 py-3 text-[10px] transition-colors hover:border-[#201b1b] sm:px-5 sm:text-xs ${size === x ? "border-[#201b1b] bg-[#201b1b] text-white" : "border-[#d8ccc5]"}`}>{x}</button>)}</div></div>
-    <div className="mt-6"><p className="text-[10px] tracking-[.2em]">COLOR</p><div className="mt-3 flex flex-wrap gap-2">{colors.map(x => <button type="button" key={x} aria-pressed={color === x} onClick={() => setColor(x)} className={`min-h-11 border px-4 py-3 text-[10px] transition-colors hover:border-[#201b1b] sm:px-5 sm:text-xs ${color === x ? "border-[#201b1b] bg-[#201b1b] text-white" : "border-[#d8ccc5]"}`}>{x}</button>)}</div></div>
-    <button type="button" onClick={add} disabled={!purchasable} className="mt-7 min-h-14 w-full bg-[#201b1b] px-6 py-4 text-[10px] tracking-[.22em] text-white transition-opacity hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-45 sm:mt-9 sm:text-xs">{!storeLive ? "COMING SOON" : product.qualityStatus !== "approved" ? "SAMPLE REVIEW IN PROGRESS" : added ? "ADDED TO BAG ✓" : "ADD TO BAG"}</button>
-    {!purchasable && <p className="mt-3 text-[10px] leading-5 opacity-55">This item is not available for purchase yet. Elarossa will open ordering after product quality and fulfilment checks are complete.</p>}
+    <div><div className="flex items-center justify-between"><p className="text-[10px] tracking-[.2em]">SIZE</p><span className="text-[9px] opacity-45">SELECT ONE</span></div><div className="mt-3 flex flex-wrap gap-2">{sizes.map(x => <button type="button" key={x} aria-pressed={size === x} aria-label={`Size ${x}`} onClick={() => setSize(x)} className={`min-h-11 rounded-full border px-4 py-3 text-[10px] transition-all hover:-translate-y-px hover:border-[#201b1b] sm:px-5 sm:text-xs ${size === x ? "border-[#201b1b] bg-[#201b1b] text-white" : "border-[#d8ccc5]"}`}>{x}</button>)}</div></div>
+    <div className="mt-6"><div className="flex items-center justify-between"><p className="text-[10px] tracking-[.2em]">COLOR</p><span className="text-[9px] opacity-45">{color}</span></div><div className="mt-3 flex flex-wrap gap-2">{colors.map(x => <button type="button" key={x} aria-pressed={color === x} aria-label={`Color ${x}`} onClick={() => setColor(x)} className={`min-h-11 rounded-full border px-4 py-3 text-[10px] transition-all hover:-translate-y-px hover:border-[#201b1b] sm:px-5 sm:text-xs ${color === x ? "border-[#201b1b] bg-[#201b1b] text-white" : "border-[#d8ccc5]"}`}>{x}</button>)}</div></div>
+    <button type="button" onClick={add} disabled={!purchasable} className="mt-7 min-h-14 w-full rounded-full bg-[#201b1b] px-6 py-4 text-[10px] tracking-[.22em] text-white transition-all hover:-translate-y-px hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-45 sm:mt-9 sm:text-xs">{!storeLive ? "COMING SOON" : product.qualityStatus !== "approved" ? "SAMPLE REVIEW IN PROGRESS" : added ? "ADDED TO BAG ✓" : "ADD TO BAG"}</button>
+    {!purchasable && <p className="mt-3 rounded-xl bg-[#efe6e0] p-3 text-[10px] leading-5 opacity-70">Ordering opens after product quality and fulfilment checks are complete.</p>}
   </div>;
 }
