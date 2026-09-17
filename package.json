@@ -8,7 +8,8 @@
     "typecheck": "tsc --noEmit",
     "build": "next build",
     "start": "next start",
-    "validate:media": "node scripts/validate-product-media.mjs"
+    "validate:media": "node scripts/validate-product-media.mjs",
+    "validate:cj": "node scripts/validate-cj-catalog.mjs"
   },
   "dependencies": {
     "next": "16.3.5",
