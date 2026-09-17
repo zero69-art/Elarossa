@@ -1,7 +1,7 @@
 import fs from "node:fs";
 
 const source = fs.readFileSync("lib/products.ts", "utf8");
-const urls = [...source.matchAll(/(?:image|gallery):\s*\[?\s*["'](https?:\/\/[^"']+)["']/g)].map((match) => match[1]);
+const urls = [...source.matchAll(/https?:\/\/[^\s"'`,\]}]+/g)].map((match) => match[0]);
 
 if (!urls.length) {
   throw new Error("No product media URLs found in lib/products.ts");
@@ -12,7 +12,10 @@ const failures = [];
 
 for (const url of uniqueUrls) {
   try {
-    const response = await fetch(url, { method: "HEAD", redirect: "follow" });
+    let response = await fetch(url, { method: "HEAD", redirect: "follow" });
+    if (response.status === 405 || response.status === 403) {
+      response = await fetch(url, { method: "GET", redirect: "follow", headers: { Range: "bytes=0-0" } });
+    }
     if (!response.ok) {
       failures.push(`${response.status} ${url}`);
     }
