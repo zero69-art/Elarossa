@@ -5,6 +5,7 @@ export const metadata = {
   title: "Account | Elarossa",
   description: "Elarossa customer account access will be introduced when persistent account features are ready.",
   alternates: { canonical: "/account" },
+  robots: { index: false, follow: true },
 };
 
 export default function AccountPage() {
