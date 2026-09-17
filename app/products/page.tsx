@@ -1,20 +1,89 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { products } from "@/lib/products";
 import Header from "@/components/Header";
 import ProductCard from "@/components/ProductCard";
-import { products } from "@/lib/products";
 
-export const metadata: Metadata = { title: "Shop Women's Essentials", description: "Discover Elarossa's curated activewear, swimwear and intimate essentials.", alternates: { canonical: "/products" } };
-type Params = Promise<{ q?: string; category?: string; size?: string; color?: string; sort?: string }>;
+export const metadata: Metadata = {
+  title: "Shop Women's Essentials | Elarossa",
+  description: "Explore the Elarossa collection of activewear, swimwear, intimates and considered everyday essentials.",
+  alternates: { canonical: "/products" },
+};
 
-export default async function ProductsPage({ searchParams }: { searchParams: Params }) {
-  const params = await searchParams; const keyword = params.q?.trim().toLowerCase() ?? ""; const category = params.category?.trim().toLowerCase() ?? ""; const size = params.size?.trim().toLowerCase() ?? ""; const color = params.color?.trim().toLowerCase() ?? ""; const sort = params.sort ?? "featured";
-  let filtered = products.filter((product) => { const haystack = [product.name, product.category, product.tag, product.description, ...product.details].join(" ").toLowerCase(); return (!keyword || haystack.includes(keyword)) && (!category || product.category.toLowerCase() === category) && (!size || product.sizes.some((item) => item.toLowerCase() === size)) && (!color || product.colors.some((item) => item.toLowerCase() === color)); });
-  filtered = [...filtered].sort((a, b) => sort === "price-asc" ? a.price - b.price : sort === "price-desc" ? b.price - a.price : sort === "newest" ? b.slug.localeCompare(a.slug) : Number(b.qualityStatus === "approved") - Number(a.qualityStatus === "approved"));
-  const categories = ["Activewear", "Swimwear", "Intimates"]; const sizes = Array.from(new Set(products.flatMap((p) => p.sizes))).sort(); const colors = Array.from(new Set(products.flatMap((p) => p.colors))).sort();
-  return <main className="min-h-screen"><Header /><div className="mx-auto max-w-7xl px-4 pb-16 pt-12 sm:px-6 sm:pb-20 sm:pt-16 md:px-8"><header className="flex flex-col gap-7 md:flex-row md:items-end md:justify-between"><div><p className="text-[10px] font-semibold tracking-[.28em]">THE COLLECTION</p><h1 className="serif mt-3 text-5xl leading-none sm:text-6xl md:text-7xl">The Elarossa Edit</h1><p className="mt-4 max-w-2xl text-sm leading-6 opacity-65">A focused collection of feminine essentials for movement, rest, travel and everyday confidence.</p></div><form action="/products" className="flex w-full max-w-md border-b border-[#cfc1ba] py-3"><input name="q" defaultValue={params.q ?? ""} aria-label="Search products" placeholder="Search the collection…" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:opacity-45" /><button type="submit" className="ml-3 min-h-10 text-[10px] font-semibold tracking-[.18em]">SEARCH</button></form></header>
-    <div className="mt-10 flex flex-col gap-4 border-y border-[#e8ded8] py-4 lg:flex-row lg:items-center lg:justify-between"><div className="flex gap-5 overflow-x-auto text-[9px] tracking-[.16em]"><Link href="/products" className="whitespace-nowrap font-semibold">ALL</Link>{categories.map((item) => <Link key={item} href={`/products?category=${item.toLowerCase()}${keyword ? `&q=${encodeURIComponent(keyword)}` : ""}`} className="whitespace-nowrap opacity-55 hover:opacity-100">{item.toUpperCase()}</Link>)}</div><form action="/products" className="flex flex-wrap gap-2"><input type="hidden" name="q" value={params.q ?? ""}/><select name="size" aria-label="Filter by size" defaultValue={size} className="min-h-10 border border-[#d9ccc5] bg-transparent px-3 text-[9px] tracking-[.12em]"><option value="">SIZE</option>{sizes.map((item) => <option key={item} value={item.toLowerCase()}>{item}</option>)}</select><select name="color" aria-label="Filter by colour" defaultValue={color} className="min-h-10 border border-[#d9ccc5] bg-transparent px-3 text-[9px] tracking-[.12em]"><option value="">COLOUR</option>{colors.map((item) => <option key={item} value={item.toLowerCase()}>{item}</option>)}</select><select name="sort" aria-label="Sort products" defaultValue={sort} className="min-h-10 border border-[#d9ccc5] bg-transparent px-3 text-[9px] tracking-[.12em]"><option value="featured">FEATURED</option><option value="newest">NEWEST</option><option value="price-asc">PRICE ↑</option><option value="price-desc">PRICE ↓</option></select><button type="submit" className="min-h-10 border border-[#201b1b] bg-[#201b1b] px-4 text-[9px] font-semibold tracking-[.12em] text-white">APPLY</button></form></div>
-    <div className="mb-7 mt-5 flex items-center justify-between text-[9px] tracking-[.16em] opacity-50"><span>{filtered.length} PIECES</span>{(keyword || category || size || color || sort !== "featured") && <Link href="/products" className="underline underline-offset-4">CLEAR FILTERS</Link>}</div>
-    {filtered.length ? <section className="grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-5 sm:gap-y-12 md:grid-cols-3 lg:grid-cols-4" aria-label="Product collection">{filtered.map((product) => <ProductCard key={product.slug} product={product} />)}</section> : <div className="py-20 text-center"><p className="serif text-3xl">Nothing matched this edit.</p><p className="mt-3 text-sm opacity-60">Try another search, category or colour.</p><Link href="/products" className="mt-6 inline-flex min-h-11 items-center underline underline-offset-4 text-[10px] font-semibold tracking-[.18em]">VIEW ALL PIECES</Link></div>}
-  </div></main>;
+type SearchParams = Promise<{ q?: string; category?: string; size?: string; color?: string; min?: string; max?: string; sort?: string }>;
+const categories = [
+  ["", "ALL"], ["activewear", "ACTIVE"], ["swimwear", "SWIM"], ["intimates", "INTIMATES"], ["women's fashion", "LIFESTYLE"],
+] as const;
+
+function money(value: string | undefined) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+export default async function ProductsPage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams;
+  const keyword = params.q?.trim().toLowerCase() ?? "";
+  const category = params.category?.trim().toLowerCase() ?? "";
+  const size = params.size?.trim().toLowerCase() ?? "";
+  const color = params.color?.trim().toLowerCase() ?? "";
+  const min = money(params.min);
+  const max = money(params.max);
+  const sort = params.sort ?? "featured";
+
+  let filtered = products.filter((product) => {
+    const haystack = [product.name, product.category, product.tag, product.description, ...product.details].join(" ").toLowerCase();
+    const matchesKeyword = !keyword || haystack.includes(keyword);
+    const matchesCategory = !category || product.category.toLowerCase() === category;
+    const matchesSize = !size || product.sizes.some((item) => item.toLowerCase() === size);
+    const matchesColor = !color || product.colors.some((item) => item.toLowerCase() === color);
+    const matchesMin = min === undefined || product.price >= min;
+    const matchesMax = max === undefined || product.price <= max;
+    return matchesKeyword && matchesCategory && matchesSize && matchesColor && matchesMin && matchesMax;
+  });
+
+  filtered = [...filtered].sort((a, b) => {
+    if (sort === "price-asc") return a.price - b.price;
+    if (sort === "price-desc") return b.price - a.price;
+    if (sort === "newest") return (b.tag === "NEW" ? 1 : 0) - (a.tag === "NEW" ? 1 : 0);
+    return (b.tag === "FOUNDING EDIT" ? 1 : 0) - (a.tag === "FOUNDING EDIT" ? 1 : 0);
+  });
+
+  const allSizes = [...new Set(products.flatMap((product) => product.sizes))].sort();
+  const allColors = [...new Set(products.flatMap((product) => product.colors))].sort();
+  const makeUrl = (changes: Record<string, string | undefined>) => {
+    const next = new URLSearchParams();
+    const current: Record<string, string | undefined> = { q: params.q, category: params.category, size: params.size, color: params.color, min: params.min, max: params.max, sort: params.sort, ...changes };
+    Object.entries(current).forEach(([key, value]) => { if (value) next.set(key, value); });
+    return `/products${next.toString() ? `?${next.toString()}` : ""}`;
+  };
+
+  return <main className="min-h-screen"><Header />
+    <div className="mx-auto max-w-7xl px-4 pb-16 pt-10 sm:px-6 sm:pb-20 sm:pt-14 md:px-8">
+      <header className="flex flex-col gap-7 border-b border-[#e8ded8] pb-8 lg:flex-row lg:items-end lg:justify-between">
+        <div><p className="text-[10px] font-semibold tracking-[.28em]">THE COLLECTION</p><h1 className="serif mt-3 text-5xl leading-none sm:text-7xl">The Elarossa Edit</h1><p className="mt-5 max-w-2xl text-sm leading-7 opacity-65">A focused collection of feminine essentials for movement, rest, travel and everyday confidence.</p></div>
+        <form className="flex w-full max-w-md rounded-full border border-[#d9cbc4] bg-white/50 px-4 py-3" action="/products"><label className="sr-only" htmlFor="collection-search">Search the collection</label><input id="collection-search" name="q" defaultValue={params.q ?? ""} aria-label="Search products" placeholder="Search the collection…" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:opacity-45" /><button className="ml-3 min-h-8 text-[10px] font-semibold tracking-[.2em]" type="submit">SEARCH</button></form>
+      </header>
+
+      <nav className="mt-6 flex gap-2 overflow-x-auto pb-2" aria-label="Product categories">
+        {categories.map(([value, label]) => <Link key={label} href={makeUrl({ category: value || undefined, q: undefined })} className={`whitespace-nowrap border px-4 py-2.5 text-[9px] font-semibold tracking-[.18em] transition ${category === value ? "border-[#201b1b] bg-[#201b1b] text-white" : "border-[#ded2cb] hover:border-[#201b1b]"}`}>{label}</Link>)}
+      </nav>
+
+      <section className="mt-6 grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
+        <aside className="hidden lg:block" aria-label="Product filters">
+          <div className="sticky top-28 space-y-7 border-r border-[#e8ded8] pr-6">
+            <div><p className="text-[9px] font-semibold tracking-[.2em]">SIZE</p><div className="mt-3 flex flex-wrap gap-2">{allSizes.map((value) => <Link key={value} href={makeUrl({ size: value })} className={`border px-2.5 py-2 text-[9px] ${size === value.toLowerCase() ? "border-[#201b1b] bg-[#201b1b] text-white" : "border-[#ded2cb]"}`}>{value}</Link>)}</div></div>
+            <div><p className="text-[9px] font-semibold tracking-[.2em]">COLOR</p><div className="mt-3 flex flex-wrap gap-2">{allColors.map((value) => <Link key={value} href={makeUrl({ color: value })} className={`border px-2.5 py-2 text-[9px] ${color === value.toLowerCase() ? "border-[#201b1b] bg-[#201b1b] text-white" : "border-[#ded2cb]"}`}>{value}</Link>)}</div></div>
+            <div><p className="text-[9px] font-semibold tracking-[.2em]">PRICE</p><div className="mt-3 flex flex-wrap gap-2"><Link href={makeUrl({ min: "0", max: "35" })} className="border border-[#ded2cb] px-2.5 py-2 text-[9px]">UNDER $35</Link><Link href={makeUrl({ min: "35", max: "50" })} className="border border-[#ded2cb] px-2.5 py-2 text-[9px]">$35–$50</Link><Link href={makeUrl({ min: "50", max: "999" })} className="border border-[#ded2cb] px-2.5 py-2 text-[9px]">$50+</Link></div></div>
+            <Link href="/products" className="inline-flex text-[9px] font-semibold tracking-[.18em] underline underline-offset-4">CLEAR FILTERS</Link>
+          </div>
+        </aside>
+
+        <div className="min-w-0">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3"><p className="text-[9px] font-semibold tracking-[.18em] opacity-55">{filtered.length} {filtered.length === 1 ? "PIECE" : "PIECES"}</p><label className="flex items-center gap-2 text-[9px] font-semibold tracking-[.15em]">SORT<select defaultValue={sort} aria-label="Sort products" className="min-h-10 border border-[#ded2cb] bg-transparent px-3 text-[9px]" onChange={() => {}}><option value="featured">Featured</option><option value="newest">Newest</option><option value="price-asc">Price: Low → High</option><option value="price-desc">Price: High → Low</option></select></label></div>
+          <div className="mb-6 flex gap-2 overflow-x-auto lg:hidden"><Link href={makeUrl({ size: undefined, color: undefined, min: undefined, max: undefined })} className="whitespace-nowrap border border-[#ded2cb] px-3 py-2 text-[9px] tracking-[.15em]">FILTERS</Link><Link href="/products" className="whitespace-nowrap border border-[#ded2cb] px-3 py-2 text-[9px] tracking-[.15em]">CLEAR</Link></div>
+          {filtered.length ? <div className="grid grid-cols-2 gap-x-3 gap-y-9 sm:gap-5 md:grid-cols-3">{filtered.map((product) => <ProductCard key={product.slug} product={product} />)}</div> : <div className="border border-[#e8ded8] px-6 py-20 text-center"><p className="serif text-3xl">Nothing matched.</p><p className="mt-3 text-sm opacity-60">Try another search or clear your filters.</p><Link href="/products" className="mt-6 inline-flex min-h-11 items-center border border-[#201b1b] px-5 text-[9px] font-semibold tracking-[.18em]">VIEW ALL PIECES</Link></div>}
+        </div>
+      </section>
+    </div>
+  </main>;
 }
