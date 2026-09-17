@@ -4,86 +4,23 @@ import { products } from "@/lib/products";
 import Header from "@/components/Header";
 import ProductCard from "@/components/ProductCard";
 
-export const metadata: Metadata = {
-  title: "Shop Women's Essentials | Elarossa",
-  description: "Explore the Elarossa collection of activewear, swimwear, intimates and considered everyday essentials.",
-  alternates: { canonical: "/products" },
-};
-
+export const metadata: Metadata = { title: "Shop Women's Essentials | Elarossa", description: "Explore the Elarossa collection of activewear, swimwear, intimates and considered everyday essentials.", alternates: { canonical: "/products" } };
 type SearchParams = Promise<{ q?: string; category?: string; size?: string; color?: string; min?: string; max?: string; sort?: string }>;
-const categories = [
-  ["", "ALL"], ["activewear", "ACTIVE"], ["swimwear", "SWIM"], ["intimates", "INTIMATES"], ["women's fashion", "LIFESTYLE"],
-] as const;
-
-function money(value: string | undefined) {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : undefined;
-}
+const categories = [["", "ALL"], ["activewear", "ACTIVE"], ["swimwear", "SWIM"], ["intimates", "INTIMATES"], ["women's fashion", "LIFESTYLE"]] as const;
+function money(value: string | undefined) { const parsed = Number(value); return Number.isFinite(parsed) ? parsed : undefined; }
 
 export default async function ProductsPage({ searchParams }: { searchParams: SearchParams }) {
-  const params = await searchParams;
-  const keyword = params.q?.trim().toLowerCase() ?? "";
-  const category = params.category?.trim().toLowerCase() ?? "";
-  const size = params.size?.trim().toLowerCase() ?? "";
-  const color = params.color?.trim().toLowerCase() ?? "";
-  const min = money(params.min);
-  const max = money(params.max);
-  const sort = params.sort ?? "featured";
+  const params = await searchParams; const keyword = params.q?.trim().toLowerCase() ?? ""; const category = params.category?.trim().toLowerCase() ?? ""; const size = params.size?.trim().toLowerCase() ?? ""; const color = params.color?.trim().toLowerCase() ?? ""; const min = money(params.min); const max = money(params.max); const sort = params.sort ?? "featured";
+  let filtered = products.filter((product) => { const haystack = [product.name, product.category, product.tag, product.description, ...product.details].join(" ").toLowerCase(); return (!keyword || haystack.includes(keyword)) && (!category || product.category.toLowerCase() === category) && (!size || product.sizes.some((item) => item.toLowerCase() === size)) && (!color || product.colors.some((item) => item.toLowerCase() === color)) && (min === undefined || product.price >= min) && (max === undefined || product.price <= max); });
+  filtered = [...filtered].sort((a, b) => sort === "price-asc" ? a.price - b.price : sort === "price-desc" ? b.price - a.price : sort === "newest" ? (b.tag === "NEW" ? 1 : 0) - (a.tag === "NEW" ? 1 : 0) : (b.tag === "FOUNDING EDIT" ? 1 : 0) - (a.tag === "FOUNDING EDIT" ? 1 : 0));
+  const allSizes = [...new Set(products.flatMap((product) => product.sizes))].sort(); const allColors = [...new Set(products.flatMap((product) => product.colors))].sort();
+  const makeUrl = (changes: Record<string, string | undefined>) => { const next = new URLSearchParams(); const current: Record<string, string | undefined> = { q: params.q, category: params.category, size: params.size, color: params.color, min: params.min, max: params.max, sort: params.sort, ...changes }; Object.entries(current).forEach(([key, value]) => { if (value) next.set(key, value); }); return `/products${next.toString() ? `?${next.toString()}` : ""}`; };
+  const sortOptions = [["featured", "FEATURED"], ["newest", "NEWEST"], ["price-asc", "PRICE LOW → HIGH"], ["price-desc", "PRICE HIGH → LOW"]] as const;
 
-  let filtered = products.filter((product) => {
-    const haystack = [product.name, product.category, product.tag, product.description, ...product.details].join(" ").toLowerCase();
-    const matchesKeyword = !keyword || haystack.includes(keyword);
-    const matchesCategory = !category || product.category.toLowerCase() === category;
-    const matchesSize = !size || product.sizes.some((item) => item.toLowerCase() === size);
-    const matchesColor = !color || product.colors.some((item) => item.toLowerCase() === color);
-    const matchesMin = min === undefined || product.price >= min;
-    const matchesMax = max === undefined || product.price <= max;
-    return matchesKeyword && matchesCategory && matchesSize && matchesColor && matchesMin && matchesMax;
-  });
-
-  filtered = [...filtered].sort((a, b) => {
-    if (sort === "price-asc") return a.price - b.price;
-    if (sort === "price-desc") return b.price - a.price;
-    if (sort === "newest") return (b.tag === "NEW" ? 1 : 0) - (a.tag === "NEW" ? 1 : 0);
-    return (b.tag === "FOUNDING EDIT" ? 1 : 0) - (a.tag === "FOUNDING EDIT" ? 1 : 0);
-  });
-
-  const allSizes = [...new Set(products.flatMap((product) => product.sizes))].sort();
-  const allColors = [...new Set(products.flatMap((product) => product.colors))].sort();
-  const makeUrl = (changes: Record<string, string | undefined>) => {
-    const next = new URLSearchParams();
-    const current: Record<string, string | undefined> = { q: params.q, category: params.category, size: params.size, color: params.color, min: params.min, max: params.max, sort: params.sort, ...changes };
-    Object.entries(current).forEach(([key, value]) => { if (value) next.set(key, value); });
-    return `/products${next.toString() ? `?${next.toString()}` : ""}`;
-  };
-
-  return <main className="min-h-screen"><Header />
-    <div className="mx-auto max-w-7xl px-4 pb-16 pt-10 sm:px-6 sm:pb-20 sm:pt-14 md:px-8">
-      <header className="flex flex-col gap-7 border-b border-[#e8ded8] pb-8 lg:flex-row lg:items-end lg:justify-between">
-        <div><p className="text-[10px] font-semibold tracking-[.28em]">THE COLLECTION</p><h1 className="serif mt-3 text-5xl leading-none sm:text-7xl">The Elarossa Edit</h1><p className="mt-5 max-w-2xl text-sm leading-7 opacity-65">A focused collection of feminine essentials for movement, rest, travel and everyday confidence.</p></div>
-        <form className="flex w-full max-w-md rounded-full border border-[#d9cbc4] bg-white/50 px-4 py-3" action="/products"><label className="sr-only" htmlFor="collection-search">Search the collection</label><input id="collection-search" name="q" defaultValue={params.q ?? ""} aria-label="Search products" placeholder="Search the collection…" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:opacity-45" /><button className="ml-3 min-h-8 text-[10px] font-semibold tracking-[.2em]" type="submit">SEARCH</button></form>
-      </header>
-
-      <nav className="mt-6 flex gap-2 overflow-x-auto pb-2" aria-label="Product categories">
-        {categories.map(([value, label]) => <Link key={label} href={makeUrl({ category: value || undefined, q: undefined })} className={`whitespace-nowrap border px-4 py-2.5 text-[9px] font-semibold tracking-[.18em] transition ${category === value ? "border-[#201b1b] bg-[#201b1b] text-white" : "border-[#ded2cb] hover:border-[#201b1b]"}`}>{label}</Link>)}
-      </nav>
-
-      <section className="mt-6 grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
-        <aside className="hidden lg:block" aria-label="Product filters">
-          <div className="sticky top-28 space-y-7 border-r border-[#e8ded8] pr-6">
-            <div><p className="text-[9px] font-semibold tracking-[.2em]">SIZE</p><div className="mt-3 flex flex-wrap gap-2">{allSizes.map((value) => <Link key={value} href={makeUrl({ size: value })} className={`border px-2.5 py-2 text-[9px] ${size === value.toLowerCase() ? "border-[#201b1b] bg-[#201b1b] text-white" : "border-[#ded2cb]"}`}>{value}</Link>)}</div></div>
-            <div><p className="text-[9px] font-semibold tracking-[.2em]">COLOR</p><div className="mt-3 flex flex-wrap gap-2">{allColors.map((value) => <Link key={value} href={makeUrl({ color: value })} className={`border px-2.5 py-2 text-[9px] ${color === value.toLowerCase() ? "border-[#201b1b] bg-[#201b1b] text-white" : "border-[#ded2cb]"}`}>{value}</Link>)}</div></div>
-            <div><p className="text-[9px] font-semibold tracking-[.2em]">PRICE</p><div className="mt-3 flex flex-wrap gap-2"><Link href={makeUrl({ min: "0", max: "35" })} className="border border-[#ded2cb] px-2.5 py-2 text-[9px]">UNDER $35</Link><Link href={makeUrl({ min: "35", max: "50" })} className="border border-[#ded2cb] px-2.5 py-2 text-[9px]">$35–$50</Link><Link href={makeUrl({ min: "50", max: "999" })} className="border border-[#ded2cb] px-2.5 py-2 text-[9px]">$50+</Link></div></div>
-            <Link href="/products" className="inline-flex text-[9px] font-semibold tracking-[.18em] underline underline-offset-4">CLEAR FILTERS</Link>
-          </div>
-        </aside>
-
-        <div className="min-w-0">
-          <div className="mb-5 flex flex-wrap items-center justify-between gap-3"><p className="text-[9px] font-semibold tracking-[.18em] opacity-55">{filtered.length} {filtered.length === 1 ? "PIECE" : "PIECES"}</p><label className="flex items-center gap-2 text-[9px] font-semibold tracking-[.15em]">SORT<select defaultValue={sort} aria-label="Sort products" className="min-h-10 border border-[#ded2cb] bg-transparent px-3 text-[9px]" onChange={() => {}}><option value="featured">Featured</option><option value="newest">Newest</option><option value="price-asc">Price: Low → High</option><option value="price-desc">Price: High → Low</option></select></label></div>
-          <div className="mb-6 flex gap-2 overflow-x-auto lg:hidden"><Link href={makeUrl({ size: undefined, color: undefined, min: undefined, max: undefined })} className="whitespace-nowrap border border-[#ded2cb] px-3 py-2 text-[9px] tracking-[.15em]">FILTERS</Link><Link href="/products" className="whitespace-nowrap border border-[#ded2cb] px-3 py-2 text-[9px] tracking-[.15em]">CLEAR</Link></div>
-          {filtered.length ? <div className="grid grid-cols-2 gap-x-3 gap-y-9 sm:gap-5 md:grid-cols-3">{filtered.map((product) => <ProductCard key={product.slug} product={product} />)}</div> : <div className="border border-[#e8ded8] px-6 py-20 text-center"><p className="serif text-3xl">Nothing matched.</p><p className="mt-3 text-sm opacity-60">Try another search or clear your filters.</p><Link href="/products" className="mt-6 inline-flex min-h-11 items-center border border-[#201b1b] px-5 text-[9px] font-semibold tracking-[.18em]">VIEW ALL PIECES</Link></div>}
-        </div>
-      </section>
-    </div>
-  </main>;
+  return <main className="min-h-screen"><Header /><div className="mx-auto max-w-7xl px-4 pb-16 pt-10 sm:px-6 sm:pb-20 sm:pt-14 md:px-8">
+    <header className="flex flex-col gap-7 border-b border-[#e8ded8] pb-8 lg:flex-row lg:items-end lg:justify-between"><div><p className="text-[10px] font-semibold tracking-[.28em]">THE COLLECTION</p><h1 className="serif mt-3 text-5xl leading-none sm:text-7xl">The Elarossa Edit</h1><p className="mt-5 max-w-2xl text-sm leading-7 opacity-65">A focused collection of feminine essentials for movement, rest, travel and everyday confidence.</p></div><form className="flex w-full max-w-md rounded-full border border-[#d9cbc4] bg-white/50 px-4 py-3" action="/products"><label className="sr-only" htmlFor="collection-search">Search the collection</label><input id="collection-search" name="q" defaultValue={params.q ?? ""} placeholder="Search the collection…" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:opacity-45" /><button className="ml-3 min-h-8 text-[10px] font-semibold tracking-[.2em]" type="submit">SEARCH</button></form></header>
+    <nav className="mt-6 flex gap-2 overflow-x-auto pb-2" aria-label="Product categories">{categories.map(([value, label]) => <Link key={label} href={makeUrl({ category: value || undefined, q: undefined })} className={`whitespace-nowrap border px-4 py-2.5 text-[9px] font-semibold tracking-[.18em] transition ${category === value ? "border-[#201b1b] bg-[#201b1b] text-white" : "border-[#ded2cb] hover:border-[#201b1b]"}`}>{label}</Link>)}</nav>
+    <section className="mt-6 grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]"><aside className="hidden lg:block" aria-label="Product filters"><div className="sticky top-28 space-y-7 border-r border-[#e8ded8] pr-6"><div><p className="text-[9px] font-semibold tracking-[.2em]">SIZE</p><div className="mt-3 flex flex-wrap gap-2">{allSizes.map((value) => <Link key={value} href={makeUrl({ size: value })} className={`border px-2.5 py-2 text-[9px] ${size === value.toLowerCase() ? "border-[#201b1b] bg-[#201b1b] text-white" : "border-[#ded2cb]"}`}>{value}</Link>)}</div></div><div><p className="text-[9px] font-semibold tracking-[.2em]">COLOR</p><div className="mt-3 flex flex-wrap gap-2">{allColors.map((value) => <Link key={value} href={makeUrl({ color: value })} className={`border px-2.5 py-2 text-[9px] ${color === value.toLowerCase() ? "border-[#201b1b] bg-[#201b1b] text-white" : "border-[#ded2cb]"}`}>{value}</Link>)}</div></div><div><p className="text-[9px] font-semibold tracking-[.2em]">PRICE</p><div className="mt-3 flex flex-wrap gap-2"><Link href={makeUrl({ min: "0", max: "35" })} className="border border-[#ded2cb] px-2.5 py-2 text-[9px]">UNDER $35</Link><Link href={makeUrl({ min: "35", max: "50" })} className="border border-[#ded2cb] px-2.5 py-2 text-[9px]">$35–$50</Link><Link href={makeUrl({ min: "50", max: "999" })} className="border border-[#ded2cb] px-2.5 py-2 text-[9px]">$50+</Link></div></div><Link href="/products" className="inline-flex text-[9px] font-semibold tracking-[.18em] underline underline-offset-4">CLEAR FILTERS</Link></div></aside>
+      <div className="min-w-0"><div className="mb-5 flex flex-wrap items-center justify-between gap-3"><p className="text-[9px] font-semibold tracking-[.18em] opacity-55">{filtered.length} {filtered.length === 1 ? "PIECE" : "PIECES"}</p><details className="relative"><summary className="flex min-h-10 cursor-pointer list-none items-center gap-2 border border-[#ded2cb] px-3 text-[9px] font-semibold tracking-[.15em]">SORT · {sortOptions.find(([value]) => value === sort)?.[1]}</summary><div className="absolute right-0 top-12 z-20 w-52 border border-[#ded2cb] bg-[#fbf8f5] p-2 shadow-lg">{sortOptions.map(([value, label]) => <Link key={value} href={makeUrl({ sort: value })} className={`block px-3 py-3 text-[9px] tracking-[.14em] hover:bg-[#eee5df] ${sort === value ? "font-semibold" : ""}`}>{label}</Link>)}</div></details></div><details className="mb-6 lg:hidden"><summary className="flex min-h-11 cursor-pointer list-none items-center justify-between border-y border-[#e8ded8] py-3 text-[9px] font-semibold tracking-[.18em]">FILTERS <span>+</span></summary><div className="grid gap-4 border-b border-[#e8ded8] py-5 sm:grid-cols-2"><div><p className="text-[9px] tracking-[.18em]">SIZE</p><div className="mt-2 flex flex-wrap gap-2">{allSizes.map((value) => <Link key={value} href={makeUrl({ size: value })} className="border border-[#ded2cb] px-3 py-2 text-[9px]">{value}</Link>)}</div></div><div><p className="text-[9px] tracking-[.18em]">COLOR</p><div className="mt-2 flex flex-wrap gap-2">{allColors.map((value) => <Link key={value} href={makeUrl({ color: value })} className="border border-[#ded2cb] px-3 py-2 text-[9px]">{value}</Link>)}</div></div><div><p className="text-[9px] tracking-[.18em]">PRICE</p><div className="mt-2 flex flex-wrap gap-2"><Link href={makeUrl({ min: "0", max: "35" })} className="border border-[#ded2cb] px-3 py-2 text-[9px]">UNDER $35</Link><Link href={makeUrl({ min: "35", max: "50" })} className="border border-[#ded2cb] px-3 py-2 text-[9px]">$35–$50</Link><Link href={makeUrl({ min: "50", max: "999" })} className="border border-[#ded2cb] px-3 py-2 text-[9px]">$50+</Link></div></div><Link href="/products" className="text-[9px] font-semibold tracking-[.18em] underline underline-offset-4">CLEAR FILTERS</Link></div></details>{filtered.length ? <div className="grid grid-cols-2 gap-x-3 gap-y-9 sm:gap-5 md:grid-cols-3">{filtered.map((product) => <ProductCard key={product.slug} product={product} />)}</div> : <div className="border border-[#e8ded8] px-6 py-20 text-center"><p className="serif text-3xl">Nothing matched.</p><p className="mt-3 text-sm opacity-60">Try another search or clear your filters.</p><Link href="/products" className="mt-6 inline-flex min-h-11 items-center border border-[#201b1b] px-5 text-[9px] font-semibold tracking-[.18em]">VIEW ALL PIECES</Link></div>}</div></section>
+  </div></main>;
 }
