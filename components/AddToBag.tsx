@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import type { Product } from "@/lib/products";
+import { track } from "@/lib/analytics";
 
 const KEY = "elarossa-cart";
 type Props = { product: Product; storeLive?: boolean };
@@ -23,6 +24,7 @@ export default function AddToBag({ product, storeLive = false }: Props) {
       if (i >= 0) items[i].quantity = Math.min(Number(items[i].quantity) + 1, 10); else items.push(payload);
       localStorage.setItem(KEY, JSON.stringify(items));
       window.dispatchEvent(new Event("elarossa-cart-updated"));
+      track("add_to_cart", { slug: product.slug, quantity: 1, size, color, price: product.price });
       setAdded(true);
       setTimeout(() => setAdded(false), 1600);
     } catch { setAdded(false); }
