@@ -6,66 +6,18 @@ import { useEffect, useState } from "react";
 const STORAGE_KEY = "elarossa-cart";
 type CartItem = { slug: string; name: string; price: number; quantity: number; image: string; size?: string; color?: string };
 
+function sanitize(value: unknown): CartItem[] { if (!Array.isArray(value)) return []; return value.filter((item): item is CartItem => Boolean(item && typeof item === "object" && typeof item.slug === "string" && typeof item.name === "string" && Number.isFinite(item.price) && Number.isFinite(item.quantity) && item.quantity > 0 && typeof item.image === "string")).map((item) => ({ ...item, quantity: Math.min(10, Math.max(1, Math.floor(item.quantity))) })); }
+
 export default function CartPage() {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [items, setItems] = useState<CartItem[]>([]); const [loading, setLoading] = useState(false); const [error, setError] = useState("");
+  useEffect(() => { try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) setItems(sanitize(JSON.parse(raw))); } catch { localStorage.removeItem(STORAGE_KEY); } }, []);
+  const update = (next: CartItem[]) => { setItems(next); localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); window.dispatchEvent(new Event("elarossa-cart-updated")); };
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0); const shipping = subtotal >= 75 || subtotal === 0 ? 0 : 7.95; const remaining = Math.max(0, 75 - subtotal); const progress = Math.min(100, (subtotal / 75) * 100);
+  async function checkout() { if (!items.length) return; setLoading(true); setError(""); try { const response = await fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: items.map(({ slug, quantity, size, color }) => ({ slug, quantity, size, color })) }) }); const data = await response.json(); if (!response.ok || !data.url) throw new Error(data.error || "Checkout could not be started."); window.location.href = data.url; } catch (err) { setError(err instanceof Error ? err.message : "Checkout could not be started."); setLoading(false); } }
 
-  useEffect(() => {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      try { setItems(JSON.parse(raw)); } catch { localStorage.removeItem(STORAGE_KEY); }
-    }
-  }, []);
-
-  const update = (next: CartItem[]) => {
-    setItems(next);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    window.dispatchEvent(new Event("elarossa-cart-updated"));
-  };
-
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shipping = subtotal >= 75 || subtotal === 0 ? 0 : 7.95;
-
-  async function checkout() {
-    if (!items.length) return;
-    setLoading(true); setError("");
-    try {
-      const response = await fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: items.map(({ slug, quantity, size, color }) => ({ slug, quantity, size, color })) }) });
-      const data = await response.json();
-      if (!response.ok || !data.url) throw new Error(data.error || "Checkout could not be started.");
-      window.location.href = data.url;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Checkout could not be started.");
-      setLoading(false);
-    }
-  }
-
-  return (
-    <main className="min-h-screen">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-5 sm:px-6 sm:py-7 md:px-8" aria-label="Cart navigation">
-        <Link href="/" className="serif inline-flex min-h-11 items-center text-xl tracking-[.12em] transition-opacity hover:opacity-60 sm:text-3xl" aria-label="Elarossa home">ELAROSSA</Link>
-        <Link href="/products" className="inline-flex min-h-11 items-center text-[10px] tracking-[.18em] underline transition-opacity hover:opacity-55 sm:text-xs">CONTINUE SHOPPING</Link>
-      </nav>
-
-      <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 md:px-8">
-        <p className="text-[10px] tracking-[.28em] sm:text-xs">YOUR BAG</p>
-        <div className="mt-2 flex items-end justify-between gap-4 sm:mt-3"><div><h1 className="serif text-4xl sm:text-5xl">Cart</h1><p className="mt-2 text-xs opacity-55">{items.length ? `${items.length} ${items.length === 1 ? "product" : "products"} · ${items.reduce((sum, item) => sum + item.quantity, 0)} items` : "Nothing here yet"}</p></div>{items.length > 0 && <button type="button" onClick={() => update([])} className="inline-flex min-h-11 items-center text-[10px] tracking-[.16em] underline opacity-60 transition-opacity hover:opacity-100 sm:text-xs">CLEAR BAG</button>}</div>
-
-        {items.length === 0 ? (
-          <div className="mt-10 rounded-[1.5rem] border border-[#e8ded8] bg-white/45 p-8 text-center shadow-sm sm:mt-12 sm:p-14"><div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-[#e8ded8] bg-white text-sm">♡</div><p className="mt-5 text-sm opacity-70">Your bag is currently empty.</p><Link href="/products" className="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-[#201b1b] px-8 py-4 text-[10px] font-semibold tracking-[.2em] text-white transition hover:-translate-y-0.5 hover:shadow-lg sm:text-xs">SHOP THE EDIT</Link></div>
-        ) : (
-          <div className="mt-8 grid gap-8 sm:mt-10 md:grid-cols-[1fr_320px] md:gap-10">
-            <div className="space-y-5">
-              {items.map((item, index) => <article key={`${item.slug}-${index}`} className="flex gap-3 rounded-2xl border border-[#e8ded8] bg-white/35 p-3 sm:gap-5 sm:p-4">
-                <img src={item.image} alt={item.name} className="h-32 w-24 shrink-0 rounded-xl object-cover sm:h-36 sm:w-28" />
-                <div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-3"><h2 className="min-w-0 text-xs leading-5 sm:text-sm">{item.name}</h2><span className="shrink-0 text-xs sm:text-sm">${(item.price * item.quantity).toFixed(2)}</span></div><p className="mt-1 text-[10px] opacity-50 sm:mt-2 sm:text-xs">{item.size ? `Size ${item.size}` : "Size selected at product page"}{item.color ? ` · ${item.color}` : ""}</p><div className="mt-4 flex flex-wrap items-center gap-3 sm:mt-5 sm:gap-4"><div className="flex items-center rounded-full border border-[#d9cbc4] bg-white/60"><button type="button" aria-label={`Decrease ${item.name} quantity`} className="min-h-10 min-w-10 text-sm transition-opacity hover:opacity-55" onClick={() => update(items.map((x, i) => i === index ? { ...x, quantity: Math.max(1, x.quantity - 1) } : x))}>−</button><span className="min-w-6 text-center text-xs" aria-label={`Quantity ${item.quantity}`}>{item.quantity}</span><button type="button" aria-label={`Increase ${item.name} quantity`} className="min-h-10 min-w-10 text-sm transition-opacity hover:opacity-55" onClick={() => update(items.map((x, i) => i === index ? { ...x, quantity: Math.min(10, x.quantity + 1) } : x))}>+</button></div><button type="button" className="min-h-10 text-[10px] underline opacity-60 transition-opacity hover:opacity-100 sm:text-xs" onClick={() => update(items.filter((_, i) => i !== index))}>Remove</button></div></div>
-              </article>)}
-            </div>
-            <aside className="h-fit rounded-[1.5rem] border border-[#e8ded8] bg-white/65 p-5 shadow-sm sm:p-7 md:sticky md:top-6"><div className="flex items-center justify-between"><h2 className="serif text-2xl">Summary</h2><span className="text-[10px] tracking-[.14em] opacity-50">USD</span></div><div className="mt-6 flex justify-between text-sm"><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div><div className="mt-3 flex justify-between text-sm"><span>Shipping</span><span>{shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}</span></div><p className="mt-3 text-[10px] leading-5 opacity-50">{shipping === 0 ? "You qualify for free shipping." : `Add $${Math.max(0, 75 - subtotal).toFixed(2)} for free shipping.`}</p><div className="mt-5 flex justify-between border-t border-[#ded3cc] pt-5 text-base font-medium"><span>Total</span><span>${(subtotal + shipping).toFixed(2)}</span></div><button type="button" onClick={checkout} disabled={loading} className="mt-7 min-h-14 w-full rounded-full bg-[#201b1b] px-5 py-4 text-[10px] font-semibold tracking-[.2em] text-white transition hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-40 disabled:hover:translate-y-0 sm:text-xs">{loading ? "OPENING CHECKOUT…" : "CHECKOUT"}</button>{error && <p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-xs leading-5 text-red-700">{error}</p>}<p className="mt-4 text-[10px] leading-5 opacity-50">Secure payment is handled by the configured payment provider. Elarossa does not store card details.</p></aside>
-          </div>
-        )}
-      </section>
-    </main>
-  );
+  return <main className="min-h-screen"><nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-5 sm:px-6 sm:py-7 md:px-8" aria-label="Cart navigation"><Link href="/" className="serif inline-flex min-h-11 items-center text-xl tracking-[.12em] transition-opacity hover:opacity-60 sm:text-3xl" aria-label="Elarossa home">ELAROSSA</Link><Link href="/shop" className="inline-flex min-h-11 items-center text-[10px] tracking-[.18em] underline transition-opacity hover:opacity-55 sm:text-xs">CONTINUE SHOPPING</Link></nav>
+    <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 md:px-8"><p className="text-[10px] tracking-[.28em] sm:text-xs">YOUR BAG</p><div className="mt-2 flex items-end justify-between gap-4 sm:mt-3"><div><h1 className="serif text-4xl sm:text-5xl">Cart</h1><p className="mt-2 text-xs opacity-55">{items.length ? `${items.length} ${items.length === 1 ? "product" : "products"} · ${items.reduce((sum, item) => sum + item.quantity, 0)} items` : "Nothing here yet"}</p></div>{items.length > 0 && <button type="button" onClick={() => update([])} className="inline-flex min-h-11 items-center text-[10px] tracking-[.16em] underline opacity-60 transition-opacity hover:opacity-100 sm:text-xs">CLEAR BAG</button>}</div>
+      {items.length === 0 ? <div className="mt-10 rounded-[1.5rem] border border-[#e8ded8] bg-white/45 p-8 text-center shadow-sm sm:mt-12 sm:p-14"><div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-[#e8ded8] bg-white text-sm">♡</div><p className="mt-5 text-sm opacity-70">Your bag is currently empty.</p><Link href="/shop" className="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-[#201b1b] px-8 py-4 text-[10px] font-semibold tracking-[.2em] text-white transition hover:-translate-y-0.5 hover:shadow-lg sm:text-xs">SHOP THE EDIT</Link></div> : <div className="mt-8 grid gap-8 sm:mt-10 md:grid-cols-[1fr_320px] md:gap-10"><div className="space-y-5">{items.map((item, index) => <article key={`${item.slug}-${index}`} className="flex gap-3 rounded-2xl border border-[#e8ded8] bg-white/35 p-3 sm:gap-5 sm:p-4"><img src={item.image} alt={item.name} className="h-32 w-24 shrink-0 rounded-xl object-cover sm:h-36 sm:w-28" /><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-3"><h2 className="min-w-0 text-xs leading-5 sm:text-sm">{item.name}</h2><span className="shrink-0 text-xs sm:text-sm">${(item.price * item.quantity).toFixed(2)}</span></div><p className="mt-1 text-[10px] opacity-50 sm:mt-2 sm:text-xs">{item.size ? `Size ${item.size}` : "Size selected at product page"}{item.color ? ` · ${item.color}` : ""}</p><div className="mt-4 flex flex-wrap items-center gap-3 sm:mt-5 sm:gap-4"><div className="flex items-center rounded-full border border-[#d9cbc4] bg-white/60"><button type="button" aria-label={`Decrease ${item.name} quantity`} className="min-h-10 min-w-10 text-sm transition-opacity hover:opacity-55" onClick={() => update(items.map((x, i) => i === index ? { ...x, quantity: Math.max(1, x.quantity - 1) } : x))}>−</button><span className="min-w-6 text-center text-xs" aria-label={`Quantity ${item.quantity}`}>{item.quantity}</span><button type="button" aria-label={`Increase ${item.name} quantity`} className="min-h-10 min-w-10 text-sm transition-opacity hover:opacity-55" onClick={() => update(items.map((x, i) => i === index ? { ...x, quantity: Math.min(10, x.quantity + 1) } : x))}>+</button></div><button type="button" className="min-h-10 text-[10px] underline opacity-60 transition-opacity hover:opacity-100 sm:text-xs" onClick={() => update(items.filter((_, i) => i !== index))}>Remove</button></div></div></article>)}</div>
+        <aside className="h-fit rounded-[1.5rem] border border-[#e8ded8] bg-white/65 p-5 shadow-sm sm:p-7 md:sticky md:top-24"><div className="flex items-center justify-between"><h2 className="serif text-2xl">Summary</h2><span className="text-[10px] tracking-[.14em] opacity-50">USD</span></div><div className="mt-6 rounded-xl border border-[#e5dad4] bg-[#f8f2ee] p-4"><div className="flex items-center justify-between gap-3 text-[10px] font-semibold tracking-[.12em]"><span>{shipping === 0 ? "COMPLIMENTARY SHIPPING" : `$${remaining.toFixed(2)} TO FREE SHIPPING`}</span><span>{Math.round(progress)}%</span></div><div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#ded2cb]"><div className="h-full rounded-full bg-[#201b1b] transition-all" style={{ width: `${progress}%` }} /></div><p className="mt-2 text-[10px] leading-5 opacity-55">{shipping === 0 ? "Your order qualifies for complimentary shipping." : "Add a little more to unlock complimentary shipping."}</p></div><div className="mt-6 flex justify-between text-sm"><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div><div className="mt-3 flex justify-between text-sm"><span>Shipping</span><span>{shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}</span></div><div className="mt-5 flex justify-between border-t border-[#ded3cc] pt-5 text-base font-medium"><span>Total</span><span>${(subtotal + shipping).toFixed(2)}</span></div><button type="button" onClick={checkout} disabled={loading} className="mt-7 min-h-14 w-full rounded-full bg-[#201b1b] px-5 py-4 text-[10px] font-semibold tracking-[.2em] text-white transition hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-40 disabled:hover:translate-y-0 sm:text-xs">{loading ? "OPENING CHECKOUT…" : "CHECKOUT →"}</button>{error && <p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-xs leading-5 text-red-700">{error}</p>}<p className="mt-4 text-[10px] leading-5 opacity-50">Secure payment is handled by the configured payment provider. Elarossa does not store card details.</p></aside></div>}
+    </section></main>;
 }
