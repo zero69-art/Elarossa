@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import type { Product } from "@/lib/products";
 
@@ -8,9 +9,10 @@ const KEY = "elarossa-cart";
 export default function QuickAdd({ product, storeLive }: { product: Product; storeLive: boolean }) {
   const [added, setAdded] = useState(false);
   const purchasable = storeLive && product.qualityStatus === "approved";
+  const hasMultipleOptions = product.sizes.length > 1 || product.colors.length > 1;
 
   function add() {
-    if (!purchasable) return;
+    if (!purchasable || hasMultipleOptions) return;
     try {
       const raw = localStorage.getItem(KEY);
       const parsed = raw ? JSON.parse(raw) : [];
@@ -27,9 +29,15 @@ export default function QuickAdd({ product, storeLive }: { product: Product; sto
     } catch { /* keep shopping usable if storage is unavailable */ }
   }
 
-  return (
-    <button type="button" onClick={add} disabled={!purchasable} aria-label={purchasable ? `Quick add ${product.name}` : `${product.name} is not available for purchase`} className="absolute inset-x-3 bottom-3 min-h-11 translate-y-2 bg-white/95 px-3 text-[9px] font-semibold tracking-[.16em] opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 disabled:hidden">
-      {added ? "ADDED TO BAG ✓" : "QUICK ADD"}
-    </button>
-  );
+  const className = "absolute inset-x-3 bottom-3 min-h-11 translate-y-2 bg-white/95 px-3 text-[9px] font-semibold tracking-[.16em] opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100";
+
+  if (!purchasable) return null;
+
+  if (hasMultipleOptions) {
+    return <Link href={`/products/${product.slug}`} className={`${className} flex items-center justify-center`} aria-label={`Select options for ${product.name}`}>SELECT OPTIONS</Link>;
+  }
+
+  return <button type="button" onClick={add} aria-label={`Quick add ${product.name}`} className={className}>
+    {added ? "ADDED TO BAG ✓" : "QUICK ADD"}
+  </button>;
 }
