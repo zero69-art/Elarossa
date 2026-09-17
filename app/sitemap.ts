@@ -6,7 +6,10 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://elarossa.vercel.app
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: baseUrl, changeFrequency: "weekly", priority: 1 },
-    { url: `${baseUrl}/products`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/shop`, changeFrequency: "daily", priority: 0.95 },
+    { url: `${baseUrl}/active`, changeFrequency: "daily", priority: 0.85 },
+    { url: `${baseUrl}/swim`, changeFrequency: "daily", priority: 0.85 },
+    { url: `${baseUrl}/intimates`, changeFrequency: "daily", priority: 0.85 },
     { url: `${baseUrl}/journal`, changeFrequency: "weekly", priority: 0.7 },
     ...journalPosts.map((post) => ({ url: `${baseUrl}/journal/${post.slug}`, changeFrequency: "monthly" as const, priority: 0.6 })),
     ...products.map((product) => ({ url: `${baseUrl}/products/${product.slug}`, changeFrequency: "weekly" as const, priority: 0.8 })),
