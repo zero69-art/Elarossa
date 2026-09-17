@@ -1,0 +1,18 @@
+export type JournalPost = {
+  slug: string;
+  category: string;
+  title: string;
+  excerpt: string;
+  body: string[];
+  image: string;
+};
+
+export const journalPosts: JournalPost[] = [
+  { slug: "the-everyday-uniform", category: "STYLE", title: "The Everyday Uniform", excerpt: "A small wardrobe can still feel expansive when every piece earns its place.", body: ["The most useful wardrobe is rarely the largest one. It is the one that makes getting dressed feel simple, considered and personal.", "Start with silhouettes you reach for repeatedly, then build around neutral layers that move easily between work, travel, movement and slow days.", "At Elarossa, the edit begins with that idea: fewer pieces, clearer choices and room for your own style to lead."], image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1400&q=85" },
+  { slug: "pack-light-live-fully", category: "TRAVEL", title: "Pack Light, Live Fully", excerpt: "The travel wardrobe is about versatility, not compromise.", body: ["Packing well starts with choosing pieces that can cross settings without asking you to think too hard.", "Look for layers, simple silhouettes and colours that work together. One strong base can become several outfits with a change of shoes, jewellery or outerwear.", "The goal is not minimalism for its own sake. It is carrying only what supports the way you want to move."], image: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1400&q=85" },
+  { slug: "movement-is-medicine", category: "MOVEMENT", title: "Movement Is Medicine", excerpt: "Make movement part of the day rather than another item on the list.", body: ["Movement does not need to look one particular way. A studio session, a long walk and a stretch between meetings can all belong to the same rhythm.", "Comfort matters because the right clothing should support the activity rather than distract from it.", "Choose pieces that let you move freely, then let consistency do the rest."], image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1400&q=85" },
+  { slug: "capsule-wardrobe", category: "STYLE", title: "How to Build a Capsule Wardrobe", excerpt: "A practical framework for editing your wardrobe without losing personality.", body: ["Begin by identifying the pieces you already wear most. They are evidence of your real life, not an imagined one.", "Add only what solves a genuine gap. Repeated silhouettes, dependable neutrals and flexible layers tend to create more combinations than statement pieces bought in isolation.", "Then leave space. A capsule wardrobe should evolve with you rather than become another set of rules."], image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1400&q=85" },
+  { slug: "the-elarossa-edit", category: "ELAROSSA", title: "The Elarossa Edit", excerpt: "Why the collection starts small, stays considered and evolves with real feedback.", body: ["Elarossa is built around an intentionally focused edit. Each style enters the collection with a job to do: move well, layer easily or make everyday dressing feel better.", "Supplier samples and product details are reviewed before items are cleared for sale. The collection can change as real-world feedback gives us better information.", "That process is part of the brand: less noise, better decisions and a wardrobe that feels like your own."], image: "https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=1400&q=85" },
+];
+
+export function getJournalPost(slug: string) { return journalPosts.find((post) => post.slug === slug); }
