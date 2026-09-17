@@ -15,6 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...products.map((product) => ({ url: `${baseUrl}/products/${product.slug}`, changeFrequency: "weekly" as const, priority: 0.8 })),
     { url: `${baseUrl}/shipping`, changeFrequency: "monthly", priority: 0.3 },
     { url: `${baseUrl}/returns`, changeFrequency: "monthly", priority: 0.3 },
+    { url: `${baseUrl}/account`, changeFrequency: "monthly", priority: 0.25 },
     { url: `${baseUrl}/privacy`, changeFrequency: "monthly", priority: 0.2 },
     { url: `${baseUrl}/terms`, changeFrequency: "monthly", priority: 0.2 },
   ];
