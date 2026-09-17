@@ -73,7 +73,7 @@ export const cjSourcedProducts: CJSourcedProduct[] = [
     media: {
       imageCountObserved: 33,
       videoGalleryObserved: true,
-      exactImageUrls: ["https://cf.cjdropshipping.com/7ee37ccf-0f8e-4323-8829-dbe0a9886fa3.jpg"]
+      exactImageUrls: []
     },
     inventoryStatus: "requires-live-check",
     launchStatus: "sample-required"
@@ -155,16 +155,16 @@ export const cjSourcedProducts: CJSourcedProduct[] = [
   },
   {
     pid: "1392719718007312384",
-    sku: "CJ party dress SKU requires live variant lookup",
+    sku: "CJWL112679901AZ",
     sourceUrl: "https://www.cjdropshipping.com/product/satin-party-dress-v-neck-backless-mini-sleeveless-summer-party-dress-p-1392719718007312384.html",
     name: "Satin V-Neck Backless Mini Party Dress",
     category: "Women's Fashion",
     cjCostFrom: 5.60,
-    sizes: [],
-    colors: [],
+    sizes: ["S", "M", "L"],
+    colors: ["White"],
     material: "Satin",
     media: {
-      imageCountObserved: 14,
+      imageCountObserved: 15,
       videoGalleryObserved: true,
       exactImageUrls: []
     },
