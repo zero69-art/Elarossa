@@ -24,4 +24,6 @@ jobs:
       - name: Production build
         run: npm run build
       - name: Validate product media URLs
-        run: node scripts/validate-product-media.mjs
+        run: npm run validate:media
+      - name: Validate CJ catalog integrity
+        run: npm run validate:cj
