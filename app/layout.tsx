@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import ImageFallbackGuard from "@/components/ImageFallbackGuard";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://elarossa.vercel.app";
 
@@ -17,5 +18,5 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#f7f2ee", colorScheme: "light" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body>{children}</body></html>;
+  return <html lang="en"><body><ImageFallbackGuard />{children}</body></html>;
 }
