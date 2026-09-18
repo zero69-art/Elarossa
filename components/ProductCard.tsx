@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Product } from "@/lib/products";
 import QuickAdd from "@/components/QuickAdd";
 import WishlistButton from "@/components/WishlistButton";
+import SafeImage from "@/components/SafeImage";
 
 const colorMap: Record<string, string> = {
   ivory: "#f4eee7", nude: "#caa88f", mocha: "#755443", stone: "#aaa39c", white: "#fff",
@@ -16,8 +17,8 @@ export default function ProductCard({ product }: { product: Product }) {
       <div className="relative">
         <Link href={`/products/${product.slug}`} className="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#a65d68]">
           <div className="relative aspect-[4/5] overflow-hidden bg-[#e9dfda]">
-            <img src={product.image} alt={`${product.name} — ${product.category}`} loading="lazy" className={`h-full w-full object-cover transition duration-700 ${secondary ? "group-hover:opacity-0" : "group-hover:scale-105"}`} />
-            {secondary && <img src={secondary} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-0 transition duration-700 group-hover:opacity-100" />}
+            <SafeImage src={product.image} alt={`${product.name} — ${product.category}`} loading="lazy" className={`h-full w-full object-cover transition duration-700 ${secondary ? "group-hover:opacity-0" : "group-hover:scale-105"}`} />
+            {secondary && <SafeImage src={secondary} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-0 transition duration-700 group-hover:opacity-100" />}
             <span className="absolute left-3 top-3 bg-white/95 px-2.5 py-2 text-[8px] font-semibold tracking-[.16em] sm:left-4 sm:top-4 sm:text-[9px]">{product.tag}</span>
             {product.qualityStatus !== "approved" && <span className="absolute bottom-3 left-3 bg-[#201b1b]/85 px-2.5 py-2 text-[8px] font-semibold tracking-[.14em] text-white sm:left-4 sm:bottom-4">PRE-LAUNCH</span>}
           </div>
