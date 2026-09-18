@@ -7,9 +7,9 @@ import Newsletter from "@/components/Newsletter";
 import { journalPosts } from "@/lib/journal";
 
 const moods = [
-  { title: "ACTIVE", href: "/active", image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=85" },
-  { title: "SWIM", href: "/swim", image: "https://images.unsplash.com/photo-1570976447640-acf6b1b4b6f7?auto=format&fit=crop&w=1200&q=85" },
-  { title: "INTIMATES", href: "/intimates", image: "https://images.unsplash.com/photo-1596755389378-c31d21fd1273?auto=format&fit=crop&w=1200&q=85" },
+  { title: "ACTIVE", href: "/active", image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=85" },
+  { title: "SWIM", href: "/swim", image: "https://images.unsplash.com/photo-1507526950761-3b8c8f8b8f4f?auto=format&fit=crop&w=1200&q=85" },
+  { title: "INTIMATES", href: "/intimates", image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=85" },
 ];
 
 export default function Home() {
@@ -19,7 +19,7 @@ export default function Home() {
       <Header />
       <section className="mx-auto grid max-w-[1600px] gap-2 p-2 sm:gap-3 sm:p-4 lg:grid-cols-[1.65fr_1fr]" aria-labelledby="hero-title">
         <div className="relative min-h-[610px] overflow-hidden bg-[#cbb9ad] sm:min-h-[700px] lg:min-h-[760px]">
-          <img src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=1800&q=85" alt="Elarossa campaign" className="absolute inset-0 h-full w-full object-cover object-center" />
+          <img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=1800&q=85" alt="Elarossa campaign" className="absolute inset-0 h-full w-full object-cover object-center" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-10 lg:max-w-xl lg:p-14">
             <p className="text-[10px] font-semibold tracking-[.28em]">THE ELAROSSA EDIT</p>
