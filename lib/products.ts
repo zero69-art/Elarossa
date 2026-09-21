@@ -51,7 +51,8 @@ export const products: Product[] = [
     supplierCostMax: 2.37,
     shippingReserve: 5,
     qualityStatus: "sample-required",
-    cjPid: "01BBC860-23D4-43D6-98C6-F39836578014"
+    cjPid: "01BBC860-23D4-43D6-98C6-F39836578014",
+    video: "https://download-only-api.cjdropshipping.com/e026d4aa6f2871ef800d4531958d0102/b6786e41fa10465b926e5b6ec8ec3409-07c532b7732e8519552a3c762e0d3ba4-ld.mp4"
   },
   {
     slug: "sculpt-high-waist-yoga-shorts",
@@ -76,7 +77,8 @@ export const products: Product[] = [
     supplierCostMax: 2.79,
     shippingReserve: 5,
     qualityStatus: "sample-required",
-    cjPid: "2501041035191622000"
+    cjPid: "2501041035191622000",
+    video: "https://download-only-api.cjdropshipping.com/7044060c138971f080246733a78e0102/22b2f786c9fa4fb4a3ecca8951faad90-29ec7b2d98bac382b391e2d3db10ab3f-ld.mp4"
   },
   {
     slug: "scrunch-seamless-gym-shorts",
@@ -218,9 +220,9 @@ export const products: Product[] = [
     colors: ["Army Green", "Black", "Brick Red", "Coralline", "Floral"],
     image: "https://cf.cjdropshipping.com/quick/product/29aa0a3c-e0de-448a-a1e3-5a3365771108.jpg",
     gallery: [
-      "https://cf.cjdropshipping.com/quick/product/29aa0a3c-e0de-448a-a1e3-5a3365771108.jpg",
       "https://cf.cjdropshipping.com/quick/product/9b324349-9219-469a-a23a-729724e8162a.jpg",
-      "https://cf.cjdropshipping.com/quick/product/f2be06fd-72df-4618-b8f2-339ad5a8d7fb.jpg"
+      "https://cf.cjdropshipping.com/quick/product/f2be06fd-72df-4618-b8f2-339ad5a8d7fb.jpg",
+      "https://cf.cjdropshipping.com/quick/product/29aa0a3c-e0de-448a-a1e3-5a3365771108.jpg"
     ],
     supplier: "CJdropshipping",
     supplierCostMax: 5.47,
@@ -251,7 +253,8 @@ export const products: Product[] = [
     supplierCostMax: 3.51,
     shippingReserve: 5,
     qualityStatus: "sample-required",
-    cjPid: "45062F6E-76F7-4F13-9797-E696A8F09256"
+    cjPid: "45062F6E-76F7-4F13-9797-E696A8F09256",
+    video: "https://download-only-api.cjdropshipping.com/2b2ef4284c5240bc93d5b1d863c849af/344d7d03ef52449583ffbac4ba868f34-bf5ae9ac046c609df1d507cbed7fc78e-ld.mp4"
   },
   {
     slug: "seamless-training-shorts",
@@ -276,7 +279,8 @@ export const products: Product[] = [
     supplierCostMax: 1.81,
     shippingReserve: 5,
     qualityStatus: "sample-required",
-    cjPid: "1636554088848969728"
+    cjPid: "1636554088848969728",
+    video: "https://download-only-api.cjdropshipping.com/f8771820c46c71edacb06632b68f0102/6f24ff242f1746b29a8d3d65501ea94d-4dbf892a4360fbb9bf3da030af983fe4-ld.mp4"
   }
 ];
 
