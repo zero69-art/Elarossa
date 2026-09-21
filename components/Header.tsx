@@ -38,11 +38,11 @@ export default function Header() {
   }
 
   return <>
-    <div className="bg-[#201b1b] px-4 py-2 text-center text-[9px] font-semibold tracking-[.18em] text-white sm:text-[10px] sm:tracking-[.24em]">COMPLIMENTARY SHIPPING ON ORDERS OVER $75 · US &amp; EUROPE</div>
+    <div className="bg-[#201b1b] px-4 py-2 text-center text-[9px] font-semibold tracking-[.18em] text-white sm:text-[10px] sm:tracking-[.24em]">COMPLIMENTARY SHIPPING ON ORDERS OVER $75 · US & EUROPE</div>
     <header className="sticky top-0 z-40 border-b border-[#e8ded8]/80 bg-[#f7f2ee]/95 backdrop-blur-md">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 md:px-8">
         <button type="button" onClick={() => setOpen(true)} className="inline-flex min-h-11 min-w-11 items-center justify-start md:hidden" aria-label="Open menu"><span className="space-y-1.5"><span className="block h-px w-5 bg-[#201b1b]" /><span className="block h-px w-3 bg-[#201b1b]" /></span></button>
-        <Link href="/" className="serif text-xl tracking-[.14em] sm:text-2xl" aria-label="Elarossa home">ELAROSSA</Link>
+        <Link href="/" className="inline-flex items-center" aria-label="Elarossa home"><img src="/logo.svg" alt="Elarossa" width="160" height="24" className="h-5 w-auto sm:h-6" /></Link>
         <nav className="hidden items-center gap-7 md:flex" aria-label="Primary navigation">
           <div className="relative" onMouseEnter={() => setShopOpen(true)} onMouseLeave={() => setShopOpen(false)}>
             <button type="button" onClick={() => setShopOpen(!shopOpen)} className="inline-flex min-h-11 items-center text-[10px] font-semibold tracking-[.2em]">SHOP</button>
