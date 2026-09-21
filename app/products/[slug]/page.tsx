@@ -13,13 +13,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const product = getProduct(slug);
   if (!product) return {};
+  const title = product.seoTitle.includes("Elarossa")
+    ? product.seoTitle
+    : `${product.seoTitle} | Elarossa`;
   return {
-    title: product.seoTitle,
+    title: { absolute: title },
     description: product.metaDescription,
     keywords: [product.name, "women's fashion", product.category.toLowerCase(), "Elarossa"],
     alternates: { canonical: `/products/${product.slug}` },
-    openGraph: { title: product.seoTitle, description: product.metaDescription, images: [{ url: product.image, alt: `${product.name} | Elarossa` }] },
-    twitter: { card: "summary_large_image", title: product.seoTitle, description: product.metaDescription, images: [product.image] },
+    openGraph: { title, description: product.metaDescription, images: [{ url: product.image, alt: `${product.name} | Elarossa` }] },
+    twitter: { card: "summary_large_image", title, description: product.metaDescription, images: [product.image] },
   };
 }
 
