@@ -14,7 +14,7 @@ concurrency:
 jobs:
   # ── Phase 1: static + build + local E2E ──────────────────────────
   verify:
-    name: Typecheck · Catalog · Build · Smoke
+    name: Typecheck · Catalog · HAR · Build · Smoke
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -36,6 +36,23 @@ jobs:
 
       - name: Validate catalog / CJ PIDs
         run: npm run validate:cj
+
+      # ── HAR fixtures: sanitize + ensure committed files were already clean ──
+      - name: Sanitize HAR fixtures
+        run: npm run har:ci:sanitize
+
+      - name: Fail if HAR needed sanitization
+        run: |
+          if ! git diff --quiet -- e2e/fixtures; then
+            echo "::error::HAR fixture(s) contained secrets or unclean fields."
+            echo "Run locally: npm run har:sanitize -- e2e/fixtures && npm run har:scan -- e2e/fixtures"
+            git diff -- e2e/fixtures
+            exit 1
+          fi
+          echo "HAR fixtures already clean (or none present)."
+
+      - name: Scan HAR fixtures for secrets
+        run: npm run har:scan -- e2e/fixtures
 
       - name: Production build
         run: npm run build

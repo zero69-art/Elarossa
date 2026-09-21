@@ -14,7 +14,8 @@
     "test:e2e:ui": "playwright test --ui",
     "har:sanitize": "node scripts/sanitize-har.mjs",
     "har:scan": "node scripts/scan-har.mjs",
-    "qa": "npm run typecheck && npm run validate:media && npm run validate:cj && npm run build && npm run test:e2e"
+    "har:ci:sanitize": "node scripts/har-ci-sanitize.mjs",
+    "qa": "npm run typecheck && npm run validate:media && npm run validate:cj && npm run har:ci:sanitize && npm run har:scan -- e2e/fixtures && npm run build && npm run test:e2e"
   },
   "dependencies": {
     "next": "16.3.5",
