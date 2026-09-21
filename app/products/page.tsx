@@ -4,7 +4,7 @@ import { products } from "@/lib/products";
 import Header from "@/components/Header";
 import ProductCard from "@/components/ProductCard";
 
-export const metadata: Metadata = { title: "Shop Women's Essentials | Elarossa", description: "Explore the Elarossa collection of activewear, swimwear, intimates and considered everyday essentials.", alternates: { canonical: "/products" } };
+export const metadata: Metadata = { title: "Shop Women's Essentials", description: "Explore the Elarossa collection of activewear, swimwear, intimates and considered everyday essentials.", alternates: { canonical: "/products" } };
 type SearchParams = Promise<{ q?: string; category?: string; size?: string; color?: string; min?: string; max?: string; sort?: string }>;
 const categories = [["", "ALL"], ["activewear", "ACTIVE"], ["swimwear", "SWIM"], ["intimates", "INTIMATES"], ["women's fashion", "LIFESTYLE"]] as const;
 function money(value: string | undefined) { const parsed = Number(value); return Number.isFinite(parsed) ? parsed : undefined; }
