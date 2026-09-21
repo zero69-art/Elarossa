@@ -9,7 +9,10 @@
     "build": "next build",
     "start": "next start",
     "validate:media": "node scripts/validate-product-media.mjs",
-    "validate:cj": "node scripts/validate-cj-catalog.mjs"
+    "validate:cj": "node scripts/validate-cj-catalog.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "qa": "npm run typecheck && npm run validate:media && npm run validate:cj && npm run build && npm run test:e2e"
   },
   "dependencies": {
     "next": "16.3.5",
@@ -19,6 +22,7 @@
     "stripe": "18.5.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.55.0",
     "@types/node": "22.15.0",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.0",

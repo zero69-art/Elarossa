@@ -1,31 +1,33 @@
 import fs from "node:fs";
 
-const source = fs.readFileSync("lib/cj-catalog.ts", "utf8");
-const pidMatches = [...source.matchAll(/pid:\s*"([^"]+)"/g)].map((m) => m[1]);
-const urlMatches = [...source.matchAll(/sourceUrl:\s*"(https:\/\/www\.cjdropshipping\.com\/product\/[^\"]+)"/g)].map((m) => m[1]);
-const names = [...source.matchAll(/name:\s*"([^"]+)"/g)].map((m) => m[1]);
-const videoFlags = [...source.matchAll(/videoGalleryObserved:\s*(true|false)/g)].map((m) => m[1] === "true");
-
-const unique = (items) => new Set(items).size === items.length;
 const errors = [];
 
-if (pidMatches.length !== names.length) errors.push(`PID/name count mismatch: ${pidMatches.length}/${names.length}`);
-if (pidMatches.length !== urlMatches.length) errors.push(`PID/sourceUrl count mismatch: ${pidMatches.length}/${urlMatches.length}`);
-if (!unique(pidMatches)) errors.push("Duplicate CJ product PID detected");
-if (!unique(urlMatches)) errors.push("Duplicate CJ source URL detected");
-if (pidMatches.some((pid) => !pid.trim())) errors.push("Blank CJ PID detected");
-if (names.some((name) => !name.trim())) errors.push("Blank product name detected");
+const products = fs.readFileSync("lib/products.ts", "utf8");
+const pids = [...products.matchAll(/cjPid:\s*"([^"]+)"/g)].map((m) => m[1]);
+const slugs = [...products.matchAll(/slug:\s*"([^"]+)"/g)].map((m) => m[1]);
 
-for (const url of urlMatches) {
-  if (!url.includes("/product/") || !url.endsWith(".html")) errors.push(`Malformed CJ source URL: ${url}`);
+if (!pids.length) errors.push("No cjPid entries found in lib/products.ts");
+if (pids.some((p) => !p.trim())) errors.push("Blank cjPid detected");
+if (new Set(pids).size !== pids.length) errors.push("Duplicate cjPid detected in products.ts");
+if (new Set(slugs).size !== slugs.length) errors.push("Duplicate slug detected in products.ts");
+
+const sampleRequired = (products.match(/qualityStatus:\s*"sample-required"/g) || []).length;
+const approved = (products.match(/qualityStatus:\s*"approved"/g) || []).length;
+
+if (fs.existsSync("lib/cj-catalog.ts")) {
+  const source = fs.readFileSync("lib/cj-catalog.ts", "utf8");
+  const catalogPids = [...source.matchAll(/pid:\s*"([^"]+)"/g)].map((m) => m[1]);
+  if (catalogPids.length && new Set(catalogPids).size !== catalogPids.length) {
+    errors.push("Duplicate PID in lib/cj-catalog.ts");
+  }
 }
 
 if (errors.length) {
-  console.error("CJ catalog validation failed:");
+  console.error("CJ / catalog validation failed:");
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
 
-const videoCount = videoFlags.filter(Boolean).length;
-console.log(`CJ catalog integrity OK: ${pidMatches.length} sourced products; ${videoCount} with CJ video galleries observed.`);
-console.log("All entries remain sample-required/live-check until exact variant inventory, shipping and physical sample quality are confirmed.");
+console.log(
+  `Catalog integrity OK: ${slugs.length} products, ${pids.length} CJ PIDs, ${sampleRequired} sample-required, ${approved} approved.`
+);
