@@ -70,8 +70,9 @@ export const products: Product[] = [
     image: "https://oss-cf.cjdropshipping.com/product/2025/04/07/10/e8809cf5-34c2-481c-bfe3-5d3d79db4d89.jpg",
     gallery: [
       "https://oss-cf.cjdropshipping.com/product/2025/04/07/10/e8809cf5-34c2-481c-bfe3-5d3d79db4d89.jpg",
-      "https://oss-cf.cjdropshipping.com/product/2025/01/04/10/b29810ed-32df-479d-b954-da9820219c88.jpg",
-      "https://oss-cf.cjdropshipping.com/product/2025/06/24/09/b37ea039-060d-4968-a69e-03d726903c11.jpg"
+      "https://cf.cjdropshipping.com/quick/product/b29810ed-32df-479d-b954-da9820219c88.jpg",
+      "https://cf.cjdropshipping.com/quick/product/b37ea039-060d-4968-a69e-03d726903c11.jpg",
+      "https://oss-cf.cjdropshipping.com/product/2025/04/07/10/e8809cf5-34c2-481c-bfe3-5d3d79db4d89.jpg"
     ],
     supplier: "CJdropshipping",
     supplierCostMax: 2.79,
@@ -97,7 +98,8 @@ export const products: Product[] = [
     gallery: [
       "https://cf.cjdropshipping.com/15432480/343123727488.jpg",
       "https://cf.cjdropshipping.com/2056/1882035166481.png",
-      "https://cf.cjdropshipping.com/2056/378551458156.png"
+      "https://cf.cjdropshipping.com/2056/378551458156.png",
+      "https://cf.cjdropshipping.com/15432480/343123727488.jpg"
     ],
     supplier: "CJdropshipping",
     supplierCostMax: 2.86,
@@ -122,7 +124,8 @@ export const products: Product[] = [
     gallery: [
       "https://cf.cjdropshipping.com/f14b4ebd-5209-480d-9a31-906fbf4d85f8.jpg",
       "https://cf.cjdropshipping.com/72226546-fa5f-4b70-a1fb-e2056ada56d2.jpg",
-      "https://cf.cjdropshipping.com/64ec78a7-ea7e-40d9-8781-89e3f3cfb85a.jpg"
+      "https://cf.cjdropshipping.com/64ec78a7-ea7e-40d9-8781-89e3f3cfb85a.jpg",
+      "https://cf.cjdropshipping.com/f14b4ebd-5209-480d-9a31-906fbf4d85f8.jpg"
     ],
     supplier: "CJdropshipping",
     supplierCostMax: 1.45,
@@ -147,7 +150,8 @@ export const products: Product[] = [
     gallery: [
       "https://cf.cjdropshipping.com/1614320128731.jpg",
       "https://cf.cjdropshipping.com/1614320128736.jpg",
-      "https://cf.cjdropshipping.com/1614320128738.jpg"
+      "https://cf.cjdropshipping.com/1614320128738.jpg",
+      "https://cf.cjdropshipping.com/1614320128731.jpg"
     ],
     supplier: "CJdropshipping",
     supplierCostMax: 5.05,
@@ -172,7 +176,8 @@ export const products: Product[] = [
     gallery: [
       "https://cf.cjdropshipping.com/2061/1379167572577.jpg",
       "https://cf.cjdropshipping.com/2061/160702526410.jpg",
-      "https://cf.cjdropshipping.com/2061/2706399906891.jpg"
+      "https://cf.cjdropshipping.com/2061/2706399906891.jpg",
+      "https://cf.cjdropshipping.com/2061/1379167572577.jpg"
     ],
     supplier: "CJdropshipping",
     supplierCostMax: 2.29,
@@ -197,7 +202,8 @@ export const products: Product[] = [
     gallery: [
       "https://cf.cjdropshipping.com/15836832/3574097292921.jpg",
       "https://cf.cjdropshipping.com/20200318/4611215098832.jpg",
-      "https://cf.cjdropshipping.com/20200318/5505315135398.jpg"
+      "https://cf.cjdropshipping.com/20200318/5505315135398.jpg",
+      "https://cf.cjdropshipping.com/15836832/3574097292921.jpg"
     ],
     supplier: "CJdropshipping",
     supplierCostMax: 1.28,
@@ -220,6 +226,7 @@ export const products: Product[] = [
     colors: ["Army Green", "Black", "Brick Red", "Coralline", "Floral"],
     image: "https://cf.cjdropshipping.com/quick/product/29aa0a3c-e0de-448a-a1e3-5a3365771108.jpg",
     gallery: [
+      "https://cf.cjdropshipping.com/quick/product/29aa0a3c-e0de-448a-a1e3-5a3365771108.jpg",
       "https://cf.cjdropshipping.com/quick/product/9b324349-9219-469a-a23a-729724e8162a.jpg",
       "https://cf.cjdropshipping.com/quick/product/f2be06fd-72df-4618-b8f2-339ad5a8d7fb.jpg",
       "https://cf.cjdropshipping.com/quick/product/29aa0a3c-e0de-448a-a1e3-5a3365771108.jpg"
@@ -247,7 +254,8 @@ export const products: Product[] = [
     gallery: [
       "https://cf.cjdropshipping.com/eac7d3b1-df5d-41bf-a537-44bdb2f62730.jpg",
       "https://cf.cjdropshipping.com/e5bea2d4-ba7d-4a67-b989-44c2a4ee636b.png",
-      "https://cf.cjdropshipping.com/a097ffc9-026b-4c6a-a386-4623b85118c9.png"
+      "https://cf.cjdropshipping.com/a097ffc9-026b-4c6a-a386-4623b85118c9.png",
+      "https://cf.cjdropshipping.com/eac7d3b1-df5d-41bf-a537-44bdb2f62730.jpg"
     ],
     supplier: "CJdropshipping",
     supplierCostMax: 3.51,
@@ -273,7 +281,8 @@ export const products: Product[] = [
     gallery: [
       "https://cf.cjdropshipping.com/5b8dbaeb-3282-4353-af6a-fe47cc9f04a8.jpg",
       "https://cf.cjdropshipping.com/194e8e76-98ab-4f18-a6c1-11a4cb719a2e.jpg",
-      "https://cf.cjdropshipping.com/4b6cb188-e4e7-4b71-a0be-068d907ddda1.jpg"
+      "https://cf.cjdropshipping.com/4b6cb188-e4e7-4b71-a0be-068d907ddda1.jpg",
+      "https://cf.cjdropshipping.com/5b8dbaeb-3282-4353-af6a-fe47cc9f04a8.jpg"
     ],
     supplier: "CJdropshipping",
     supplierCostMax: 1.81,
