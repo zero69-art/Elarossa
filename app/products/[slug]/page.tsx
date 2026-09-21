@@ -29,7 +29,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   if (!product) notFound();
   const storeLive = process.env.ELAROSSA_STORE_LIVE === "true";
   const gallery = product.gallery.length ? product.gallery.slice(0, 6) : [product.image];
-  const productVideo = product.video;
+  const productVideo = product.video
+    ? product.video.includes("cjdropshipping.com")
+      ? `/api/media/video?slug=${encodeURIComponent(product.slug)}`
+      : product.video
+    : undefined;
   const related = products.filter((item) => item.slug !== product.slug && item.category === product.category).slice(0, 4);
   const reviewLabel = product.qualityStatus === "approved" ? "SAMPLE APPROVED" : "SAMPLE REVIEW";
   const jsonLd = {
