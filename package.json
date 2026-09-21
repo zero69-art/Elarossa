@@ -12,6 +12,8 @@
     "validate:cj": "node scripts/validate-cj-catalog.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "har:sanitize": "node scripts/sanitize-har.mjs",
+    "har:scan": "node scripts/scan-har.mjs",
     "qa": "npm run typecheck && npm run validate:media && npm run validate:cj && npm run build && npm run test:e2e"
   },
   "dependencies": {
