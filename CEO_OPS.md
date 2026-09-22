@@ -1,85 +1,48 @@
-# Elarossa — CEO Operating System
-**Mission: Earn or die. Luxury-first women's essentials. US + Europe.**
+# Elarossa — CEO operating log
 
-## Current state (2026-09-21)
-- Storefront live on Vercel: https://elarossa.vercel.app
-- Checkout gated (`ELAROSSA_STORE_LIVE=false`) until samples + fulfilment verified
-- All catalog items currently `qualityStatus: "sample-required"`
-- Stack: Next.js + TypeScript + Tailwind + Stripe + CJdropshipping hooks
-- Missing pages fixed: /about, /faq, /contact
+**Goal:** million-dollar brand. **Constraint:** owner capital ≈ $0 (domain + email only when ready).
 
-## Non-negotiable economics
-| Metric | Target |
-|--------|--------|
-| Gross margin after product cost + shipping reserve | ≥ 55% |
-| Max supplier cost (CJ) | Keep under `supplierCostMax` |
-| Free shipping threshold | $75 |
-| Max ad CAC (blended) | ≤ 25% of AOV |
-| Sample approval required before `qualityStatus: "approved"` | Yes |
+## Current state (2026-09-22)
 
-Never sell a product that has not passed sample review.
+| Area | Status |
+|------|--------|
+| Live site | https://elarossa.vercel.app — healthy |
+| Catalog | 15 SKUs, CJ-sourced, sample-required |
+| Checkout | **Closed** until samples approved + `ELAROSSA_STORE_LIVE=true` |
+| Demand capture | Homepage newsletter + **PDP Notify Me** waitlist |
+| QA | GitHub Actions: typecheck, media, CJ, HAR scan, Playwright, post-deploy |
+| Domain | Owner buys later (UPI); keep Vercel URL until then |
 
-## Agent / Bot hierarchy (under CEO)
+## This week's CEO actions (in progress)
 
-### 1. Product Hunter Bot
-- Scans CJ catalog + trend signals for high-margin women's active / swim / intimates
-- Output: candidate SKUs with cost, suggested retail, margin, image quality score
-- Hard rule: reject if projected margin < 55% after shipping reserve
+1. **Demand before inventory risk** — Notify Me on every gated PDP (shipped). Collect size/color intent.
+2. **Persist emails** — Owner: create free Formspree form → set `NEWSLETTER_WEBHOOK_URL` on Vercel.
+3. **Sample one hero SKU** — Scrunch Seamless Lifting Leggings (highest story fit). Approve or kill.
+4. **Domain when ready** — Brandable `.com` / `.shop` via UPI registrar; point to Vercel; `hello@` mailbox.
+5. **Organic only** — Pinterest + 3 journal posts; no paid ads until first approved sample.
 
-### 2. Quality & Sample Gate
-- Orders physical samples
-- Records fit, fabric, stitching, packaging, real photos
-- Only then flips `qualityStatus` → `"approved"` and sets real product images
+## Revenue rule
 
-### 3. Pricing & Margin Bot
-- Watches competitor pricing (similar silhouette)
-- Adjusts `price` / `compareAtPrice` while protecting floor margin
-- Flags when shipping reserve is too low for EU destinations
+No open cart on untested product. **Earn trust first, then earn money.**
 
-### 4. Marketing Bot
-- Channels: Instagram/TikTok organic + Meta ads + email/SMS (Klaviyo or similar)
-- Assets: product carousels, "founding edit" story, journal content
-- Budget guardrail: never spend > $X/day without CEO approval (start $50/day test)
-- Creative tests: 3 hooks × 2 creatives weekly
+## Bot stack
 
-### 5. SEO / Store Optimization Bot
-- Ensures every product has unique seoTitle + metaDescription
-- Internal linking, sitemap, Core Web Vitals
-- Collection pages stay clean and fast
+| Bot | Job |
+|-----|-----|
+| Catalog | CJ search, margin ≥52%, media validation |
+| QA | Playwright smoke + HAR secret gate |
+| Capture | Newsletter + product waitlist API |
+| Quality | `qualityStatus` must be `approved` before live sell |
 
-### 6. Operations & Support Bot
-- Order → CJ fulfilment mapping once live
-- CS templates for shipping, returns, size questions
-- Escalates refunds / quality issues to CEO
+## Owner checklist (you)
 
-### 7. Profit / CEO Analytics Bot
-- Daily dashboard: revenue, margin, CAC, ROAS, inventory risk
-- Alerts on margin compression or ad spend over threshold
-- Weekly "kill or scale" recommendation per SKU
+- [ ] Set `NEWSLETTER_WEBHOOK_URL` (Formspree free)
+- [ ] Order 1–2 CJ samples of founding leggings when you can
+- [ ] Buy domain + email when budget allows
+- [ ] Do **not** set `ELAROSSA_STORE_LIVE=true` until sample passes
 
-## Go-live checklist (do in order)
-1. [ ] Order samples for top 4–6 SKUs (founding edit + highest margin)
-2. [ ] Real product photography (or high-quality lifestyle with accurate product)
-3. [ ] Set `qualityStatus: "approved"` only for passed items
-4. [ ] Configure Stripe live keys + webhook
-5. [ ] Set `ELAROSSA_STORE_LIVE=true`
-6. [ ] Soft launch email list + Instagram
-7. [ ] First paid test ($50–100/day Meta) with clear ROAS kill switch
-8. [ ] Monitor first 20 orders for fulfilment quality
+## Next CEO moves after webhook is set
 
-## Immediate 7-day sprint
-**Day 1–2:** Fix remaining UX/SEO gaps, expand journal, polish product pages  
-**Day 3–4:** Shortlist + sample order for 5 highest-margin candidates  
-**Day 5:** Creative assets for launch (static + short video)  
-**Day 6:** Email welcome flow + 10% first-order code  
-**Day 7:** Soft open selected SKUs + first traffic test  
-
-## Revenue path to first $1M
-- Phase 1 (0–$10k/mo): Founding edit, organic + small paid, high AOV via free-shipping threshold
-- Phase 2 ($10–50k/mo): Expand approved catalog to 15–25 SKUs, retargeting, UGC
-- Phase 3 ($50k+/mo): Private label / better suppliers, subscription or bundle offers, EU local fulfilment if volume justifies
-
-Every decision is measured against cash, margin, and brand trust.  
-If a SKU or channel does not contribute to contribution margin after CAC, kill it.
-
-— CEO
+- Weekly digest of waitlist emails by SKU
+- Open only `approved` SKUs
+- Stripe test checkout rehearsal
