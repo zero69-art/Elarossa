@@ -13,7 +13,6 @@ async function resolveAccessToken(): Promise<string> {
     throw new Error("CJ API credentials are not configured (set CJ_API_KEY or CJ_ACCESS_TOKEN)");
   }
 
-  // Re-use token for ~1 day inside this process to stay under rate limits
   if (cachedAccessToken && Date.now() < cachedExpiryMs) return cachedAccessToken;
 
   const res = await fetch(`${CJ_API}/authentication/getAccessToken`, {
@@ -27,7 +26,6 @@ async function resolveAccessToken(): Promise<string> {
     throw new Error(json?.message || "Failed to obtain CJ access token");
   }
   cachedAccessToken = String(json.data.accessToken);
-  // Refresh a day early if expiry is far away; otherwise 12h safety
   const expiry = json.data.accessTokenExpiryDate
     ? new Date(json.data.accessTokenExpiryDate).getTime() - 24 * 60 * 60 * 1000
     : Date.now() + 12 * 60 * 60 * 1000;
@@ -53,6 +51,24 @@ export async function cjGet(
   if (!response.ok) throw new Error(`CJ API request failed: ${response.status}`);
   const json = await response.json();
   if (json?.result === false) throw new Error(json?.message || "CJ API request failed");
+  return json;
+}
+
+export async function cjPost(path: string, body: Record<string, unknown> = {}) {
+  const token = await resolveAccessToken();
+  const response = await fetch(`${CJ_API}${path}`, {
+    method: "POST",
+    headers: {
+      "CJ-Access-Token": token,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+    cache: "no-store",
+  });
+
+  if (!response.ok) throw new Error(`CJ API POST failed: ${response.status}`);
+  const json = await response.json();
+  if (json?.result === false) throw new Error(json?.message || "CJ API POST failed");
   return json;
 }
 
@@ -153,7 +169,6 @@ export function toCJStoreProduct(item: CJProductSummary) {
   const image = item.bigImage || item.productImageSet?.[0] || "/image-fallback.svg";
   const gallery = Array.from(new Set([image, ...(item.productImageSet ?? [])])).slice(0, 8);
   const supplierCost = parseNumber(item.sellPrice, 0);
-  // Target ~3x cost + shipping reserve → retail that clears 55%+ margin after $8 ship reserve
   const retail = Math.max(24.99, Math.ceil((supplierCost * 3.4 + 9) * 100) / 100);
 
   return {
