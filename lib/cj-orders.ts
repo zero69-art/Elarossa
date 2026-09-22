@@ -7,7 +7,7 @@ export async function queryInventoryByPid(pid: string) {
 }
 
 export async function queryVariants(pid: string, countryCode = "US") {
-  return cjGet("/product/variant/queryByPid", { pid, countryCode });
+  return cjGet("/product/variant/query", { pid, countryCode });
 }
 
 /**
@@ -32,7 +32,6 @@ export async function createCjOrder(input: {
   logisticName?: string;
   remark?: string;
 }) {
-  // CJ Create Order V2 — field names follow CJ docs; adjust if account requires V3 store flow.
   const body = {
     orderNumber: input.orderNumber,
     shippingCountry: input.shipping.countryCode,
