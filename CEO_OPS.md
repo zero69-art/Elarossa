@@ -1,48 +1,48 @@
 # Elarossa — CEO operating log
 
-**Goal:** million-dollar brand. **Constraint:** owner capital ≈ $0 (domain + email only when ready).
+**Goal:** million-dollar brand. **Constraint:** ~$0 owner capital until domain/email.
 
-## Current state (2026-09-22)
+## Live status
 
 | Area | Status |
 |------|--------|
-| Live site | https://elarossa.vercel.app — healthy |
-| Catalog | 15 SKUs, CJ-sourced, sample-required |
-| Checkout | **Closed** until samples approved + `ELAROSSA_STORE_LIVE=true` |
-| Demand capture | Homepage newsletter + **PDP Notify Me** waitlist |
-| QA | GitHub Actions: typecheck, media, CJ, HAR scan, Playwright, post-deploy |
-| Domain | Owner buys later (UPI); keep Vercel URL until then |
+| Site | https://elarossa.vercel.app |
+| Catalog | 15 SKUs, all `sample-required` |
+| Checkout | **LOCKED** |
+| Demand | Newsletter + PDP **Notify Me** |
+| Fulfillment code | **Built & gated** (create-order, variant sync, status) |
+| Variant map | Empty until admin sync after samples |
 
-## This week's CEO actions (in progress)
+## Fulfillment stack (shipped)
 
-1. **Demand before inventory risk** — Notify Me on every gated PDP (shipped). Collect size/color intent.
-2. **Persist emails** — Owner: create free Formspree form → set `NEWSLETTER_WEBHOOK_URL` on Vercel.
-3. **Sample one hero SKU** — Scrunch Seamless Lifting Leggings (highest story fit). Approve or kill.
-4. **Domain when ready** — Brandable `.com` / `.shop` via UPI registrar; point to Vercel; `hello@` mailbox.
-5. **Organic only** — Pinterest + 3 journal posts; no paid ads until first approved sample.
+| Endpoint | Purpose |
+|----------|---------|
+| `POST /api/admin/sync-variants` | Pull CJ vids → draft map JSON (Bearer ADMIN_ACCESS_TOKEN) |
+| `GET /api/admin/fulfillment-status` | Readiness blockers |
+| `POST /api/orders/create-cj` | Create CJ order — **403 unless store live + approved + mapped** |
 
-## Revenue rule
+Env:
 
-No open cart on untested product. **Earn trust first, then earn money.**
+- `ELAROSSA_STORE_LIVE=true` — only when ready
+- `CJ_VARIANT_MAP_JSON` — JSON object of `slug::size::color → { vid, pid }`
+- `FULFILLMENT_SECRET` — Bearer for create-cj
+- `ADMIN_ACCESS_TOKEN` — admin routes
+- `NEWSLETTER_WEBHOOK_URL` — Formspree etc.
 
-## Bot stack
+## Open-store checklist (do not skip)
 
-| Bot | Job |
-|-----|-----|
-| Catalog | CJ search, margin ≥52%, media validation |
-| QA | Playwright smoke + HAR secret gate |
-| Capture | Newsletter + product waitlist API |
-| Quality | `qualityStatus` must be `approved` before live sell |
+1. Sample hero SKU (scrunch leggings) → pass fit/quality
+2. Set that product `qualityStatus: "approved"`
+3. `POST /api/admin/sync-variants` → review → set `CJ_VARIANT_MAP_JSON`
+4. Stripe test payment → create-cj dry run with your address
+5. Then `ELAROSSA_STORE_LIVE=true`
 
-## Owner checklist (you)
+## Owner ($0) tasks
 
-- [ ] Set `NEWSLETTER_WEBHOOK_URL` (Formspree free)
-- [ ] Order 1–2 CJ samples of founding leggings when you can
-- [ ] Buy domain + email when budget allows
-- [ ] Do **not** set `ELAROSSA_STORE_LIVE=true` until sample passes
+- [ ] Formspree → `NEWSLETTER_WEBHOOK_URL`
+- [ ] One CJ sample when possible
+- [ ] Domain later (UPI)
 
-## Next CEO moves after webhook is set
+## Rule
 
-- Weekly digest of waitlist emails by SKU
-- Open only `approved` SKUs
-- Stripe test checkout rehearsal
+No live checkout on untested product. Demand first, samples second, automation third.
