@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import ImageFallbackGuard from "@/components/ImageFallbackGuard";
+import ShoppingAssistant from "@/components/ShoppingAssistant";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://elarossa.vercel.app";
 
@@ -84,6 +85,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         />
         <ImageFallbackGuard />
         {children}
+        <ShoppingAssistant />
       </body>
     </html>
   );
