@@ -38,7 +38,7 @@ export default function Header() {
   }
 
   return <>
-    <div className="bg-[#201b1b] px-4 py-2 text-center text-[9px] font-semibold tracking-[.18em] text-white sm:text-[10px] sm:tracking-[.24em]">COMPLIMENTARY SHIPPING ON ORDERS OVER $75 · US & EUROPE</div>
+    <div className="announcement-bar px-4 py-2 text-center text-[9px] font-semibold tracking-[.18em] sm:text-[10px] sm:tracking-[.24em]">COMPLIMENTARY SHIPPING ON ORDERS OVER $75 · US & EUROPE</div>
     <header className="sticky top-0 z-40 border-b border-[#e8ded8]/80 bg-[#f7f2ee]/95 backdrop-blur-md">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 md:px-8">
         <button type="button" onClick={() => setOpen(true)} className="inline-flex min-h-11 min-w-11 items-center justify-start md:hidden" aria-label="Open menu"><span className="space-y-1.5"><span className="block h-px w-5 bg-[#201b1b]" /><span className="block h-px w-3 bg-[#201b1b]" /></span></button>
