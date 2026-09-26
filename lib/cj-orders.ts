@@ -1,13 +1,46 @@
-import { cjGet, cjPost } from "@/lib/cj";
+import { cjGet, cjPost, clearCjGetCache } from "@/lib/cj";
 
 /** Thin wrappers around CJ order / inventory endpoints. */
 
 export async function queryInventoryByPid(pid: string) {
-  return cjGet("/product/stock/queryByPid", { pid });
+  return cjGet("/product/stock/queryByPid", { pid }, { useCache: true });
 }
 
 export async function queryVariants(pid: string, countryCode = "US") {
-  return cjGet("/product/variant/query", { pid, countryCode });
+  return cjGet("/product/variant/query", { pid, countryCode }, { useCache: true });
+}
+
+/**
+ * Batch-friendly variant fetch with limited concurrency (avoids CJ rate limits).
+ */
+export async function queryVariantsBatch(
+  pids: string[],
+  countryCode = "US",
+  concurrency = 3,
+) {
+  const unique = [...new Set(pids.filter(Boolean))];
+  const results: Array<{ pid: string; data?: unknown; error?: string }> = [];
+  let i = 0;
+
+  async function worker() {
+    while (i < unique.length) {
+      const idx = i++;
+      const pid = unique[idx];
+      try {
+        const data = await queryVariants(pid, countryCode);
+        results[idx] = { pid, data };
+      } catch (err) {
+        results[idx] = {
+          pid,
+          error: err instanceof Error ? err.message : String(err),
+        };
+      }
+    }
+  }
+
+  const workers = Array.from({ length: Math.min(concurrency, unique.length) }, () => worker());
+  await Promise.all(workers);
+  return results;
 }
 
 /**
@@ -52,9 +85,12 @@ export async function createCjOrder(input: {
     })),
   };
 
-  return cjPost("/shopping/order/createOrderV2", body);
+  const result = await cjPost("/shopping/order/createOrderV2", body);
+  // Order side-effects: drop any stale inventory cache for ordered vids' pids
+  clearCjGetCache();
+  return result;
 }
 
 export async function getCjOrder(orderId: string) {
-  return cjGet("/shopping/order/getOrderDetail", { orderId });
+  return cjGet("/shopping/order/getOrderDetail", { orderId }, { useCache: false });
 }
