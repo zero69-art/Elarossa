@@ -6,13 +6,13 @@ import ServiceBar from "@/components/ServiceBar";
 import Newsletter from "@/components/Newsletter";
 import { journalPosts } from "@/lib/journal";
 
-/** Campaign imagery — women only (activewear / swim / soft). Verified Unsplash. */
+/** Campaign imagery — women only, elevated & body-confident (verified Unsplash). */
 const moods = [
   {
     title: "ACTIVE",
     href: "/active",
     image:
-      "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=85",
   },
   {
     title: "SWIM",
@@ -29,7 +29,7 @@ const moods = [
 ];
 
 export default function Home() {
-  const featured = products.slice(0, 4);
+  const featured = products.slice(0, 8);
   return (
     <main className="min-h-screen bg-[#f8f4ef]">
       <Header />
@@ -39,8 +39,8 @@ export default function Home() {
       >
         <div className="relative min-h-[610px] overflow-hidden bg-[#cbb9ad] sm:min-h-[700px] lg:min-h-[760px]">
           <img
-            src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1800&q=85"
-            alt="Women in yoga activewear — Elarossa campaign"
+            src="https://images.unsplash.com/photo-1606902965551-dce093cda6e7?auto=format&fit=crop&w=1800&q=85"
+            alt="Woman in mauve sculpt activewear — Elarossa campaign"
             className="absolute inset-0 h-full w-full object-cover object-center"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
@@ -50,7 +50,7 @@ export default function Home() {
               Feel beautifully yourself.
             </h1>
             <p className="mt-5 max-w-sm text-sm leading-6 text-white/85">
-              Curated feminine essentials for movement, confidence, travel and everyday life.
+              Sculpting silhouettes, soft strength and pieces made for the way you move.
             </p>
             <Link
               href="/shop"
@@ -64,9 +64,11 @@ export default function Home() {
           <div className="grid grid-cols-[.9fr_1.1fr] overflow-hidden bg-[#eee5df]">
             <div className="flex flex-col justify-center p-5 sm:p-8 lg:p-10">
               <h2 className="serif text-3xl leading-[1.05] sm:text-4xl">
-                Dressed for the way you live.
+                Confidence you can wear.
               </h2>
-              <p className="mt-5 text-xs leading-5">From morning movement to midnight escapes.</p>
+              <p className="mt-5 text-xs leading-5">
+                From studio sculpt to sunlit off-duty — feminine, body-aware, considered.
+              </p>
               <Link
                 href="/shop"
                 className="mt-7 w-fit border-b border-[#201b1b] pb-2 text-[10px] font-semibold tracking-[.14em]"
@@ -75,8 +77,8 @@ export default function Home() {
               </Link>
             </div>
             <img
-              src="https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&w=1000&q=85"
-              alt="Woman in sports bra and shorts — strength edit"
+              src="https://images.unsplash.com/photo-1546483875-ad9014c88eba?auto=format&fit=crop&w=1000&q=85"
+              alt="Woman in crimson sculpt leggings — strength edit"
               className="h-full w-full object-cover"
             />
           </div>
@@ -155,7 +157,7 @@ export default function Home() {
         <div className="text-center">
           <p className="text-[10px] font-semibold tracking-[.28em]">THE FOUNDING EDIT</p>
           <h2 id="edit-title" className="serif mt-2 text-3xl sm:text-4xl">
-            Four pieces. One Elarossa state of mind.
+            The Elarossa edit — pieces that feel as good as they look.
           </h2>
         </div>
         <div className="mt-9 grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-4 sm:gap-5">
@@ -251,7 +253,7 @@ export default function Home() {
           </div>
         </div>
         <div className="mx-auto mt-10 max-w-[1500px] border-t border-white/10 pt-6 text-[9px] tracking-[.1em] opacity-45">
-          © 2026 ELAROSSA · Campaign imagery is editorial; product photos use supplier media.
+          © 2026 ELAROSSA · Campaign imagery is editorial; product photos use supplier media when available.
         </div>
       </footer>
     </main>
