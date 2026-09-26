@@ -12,7 +12,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # ── Phase 1: static + build + local E2E ──────────────────────────
   verify:
     name: Typecheck · Catalog · HAR · Build · Smoke
     runs-on: ubuntu-latest
@@ -23,7 +22,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: npm
 
       - name: Install dependencies
         run: npm install
@@ -37,7 +35,6 @@ jobs:
       - name: Validate catalog / CJ PIDs
         run: npm run validate:cj
 
-      # ── HAR fixtures: sanitize + ensure committed files were already clean ──
       - name: Sanitize HAR fixtures
         run: npm run har:ci:sanitize
 
@@ -78,7 +75,6 @@ jobs:
             test-results/
           retention-days: 7
 
-  # ── Phase 2: post-deploy smoke against live Vercel URL ───────────
   post-deploy:
     name: Post-deploy smoke (production)
     runs-on: ubuntu-latest
@@ -91,7 +87,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: npm
 
       - name: Install dependencies
         run: npm install

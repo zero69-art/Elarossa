@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-
-export const dynamic = "force-dynamic";
 import Link from "next/link";
 import Header from "@/components/Header";
 import AccountClient from "@/components/AccountClient";
 import { getSessionUser } from "@/lib/auth/session";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Account",
