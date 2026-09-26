@@ -4,7 +4,8 @@ export type ElarossaEvent =
   | "add_to_cart"
   | "begin_checkout"
   | "purchase"
-  | "newsletter_signup";
+  | "newsletter_signup"
+  | "waitlist_join";
 
 export function track(event: ElarossaEvent, payload: Record<string, unknown> = {}) {
   if (typeof window === "undefined") return;

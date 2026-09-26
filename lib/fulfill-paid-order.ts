@@ -8,14 +8,23 @@ export type FulfillResult =
   | { status: "ok"; cj: unknown; orderNumber: string }
   | { status: "error"; reason: string; detail?: string };
 
+type SessionWithShipping = Stripe.Checkout.Session & {
+  shipping_details?: {
+    name?: string | null;
+    phone?: string | null;
+    address?: Stripe.Address | null;
+  } | null;
+};
+
 function shippingFromSession(session: Stripe.Checkout.Session) {
-  const addr = session.shipping_details?.address || session.customer_details?.address;
+  const s = session as SessionWithShipping;
+  const addr = s.shipping_details?.address || s.customer_details?.address;
   const name =
-    session.shipping_details?.name ||
-    session.customer_details?.name ||
+    s.shipping_details?.name ||
+    s.customer_details?.name ||
     "Customer";
-  const phone = session.customer_details?.phone || session.shipping_details?.phone || "";
-  const email = session.customer_details?.email || undefined;
+  const phone = s.customer_details?.phone || s.shipping_details?.phone || "";
+  const email = s.customer_details?.email || undefined;
 
   if (!addr?.country || !addr?.city || !addr?.line1 || !addr?.postal_code) {
     return null;
@@ -38,7 +47,6 @@ function linesFromSession(session: Stripe.Checkout.Session): CartLineMeta[] {
   const fromMeta = decodeCartMetadata(session.metadata?.cart);
   if (fromMeta.length) return fromMeta;
 
-  // Fallback: parse human order_items metadata if cart JSON missing
   const raw = session.metadata?.order_items || "";
   const parts = raw.split(" | ").map((p) => p.trim()).filter(Boolean);
   const lines: CartLineMeta[] = [];
@@ -102,7 +110,7 @@ export async function fulfillPaidCheckoutSession(
     return { status: "error", reason: resolved.reason, detail: resolved.detail };
   }
 
-  const orderNumber = session.id; // cs_… unique per Stripe session
+  const orderNumber = session.id;
 
   try {
     const cj = await createCjOrder({
