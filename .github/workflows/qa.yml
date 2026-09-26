@@ -60,10 +60,29 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: E2E smoke (production server)
-        run: npx playwright test
+        run: npx playwright test --project=chromium
         env:
           CI: "true"
           NEXT_TELEMETRY_DISABLED: "1"
+
+      - name: Visual regression screenshots
+        id: visual
+        continue-on-error: true
+        run: npx playwright test --project=visual
+        env:
+          CI: "true"
+          NEXT_TELEMETRY_DISABLED: "1"
+
+      - name: Upload visual diff screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diff-screenshots
+          path: |
+            test-results/
+            e2e/visual.spec.ts-snapshots/
+          retention-days: 14
+          if-no-files-found: ignore
 
       - name: Upload Playwright report
         if: failure()
@@ -98,10 +117,27 @@ jobs:
         run: sleep 45
 
       - name: E2E smoke against production
-        run: npx playwright test
+        run: npx playwright test --project=chromium
         env:
           CI: "true"
           PLAYWRIGHT_BASE_URL: https://elarossa.vercel.app
+
+      - name: Visual regression against production
+        continue-on-error: true
+        run: npx playwright test --project=visual
+        env:
+          CI: "true"
+          PLAYWRIGHT_BASE_URL: https://elarossa.vercel.app
+
+      - name: Upload production visual diffs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diff-screenshots-production
+          path: |
+            test-results/
+          retention-days: 14
+          if-no-files-found: ignore
 
       - name: Upload production smoke report
         if: failure()
