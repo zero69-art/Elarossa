@@ -14,10 +14,11 @@
     "test:e2e:ui": "playwright test --ui",
     "test:visual": "playwright test --project=visual",
     "test:visual:update": "playwright test --project=visual --update-snapshots",
+    "test:a11y": "playwright test --project=a11y",
     "har:sanitize": "node scripts/sanitize-har.mjs",
     "har:scan": "node scripts/scan-har.mjs",
     "har:ci:sanitize": "node scripts/har-ci-sanitize.mjs",
-    "qa": "npm run typecheck && npm run validate:media && npm run validate:cj && npm run har:ci:sanitize && npm run har:scan -- e2e/fixtures && npm run build && npm run test:e2e"
+    "qa": "npm run typecheck && npm run validate:media && npm run validate:cj && npm run har:ci:sanitize && npm run har:scan -- e2e/fixtures && npm run build && npm run test:e2e && npm run test:a11y"
   },
   "dependencies": {
     "next": "16.3.5",
@@ -27,6 +28,7 @@
     "stripe": "18.5.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
     "@playwright/test": "1.55.0",
     "@types/node": "22.15.0",
     "@types/react": "19.1.0",

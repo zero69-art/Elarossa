@@ -11,7 +11,6 @@ export default defineConfig({
   timeout: 60_000,
   expect: {
     toHaveScreenshot: {
-      // Allow minor antialiasing / font differences across OS
       maxDiffPixelRatio: 0.02,
       threshold: 0.2,
       animations: "disabled",
@@ -25,14 +24,13 @@ export default defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "on-first-retry",
-    // Stable viewport for visual diffs
     viewport: { width: 1280, height: 720 },
     deviceScaleFactor: 1,
   },
   projects: [
     {
       name: "chromium",
-      testIgnore: [/visual\.spec\.ts/],
+      testIgnore: [/visual\.spec\.ts/, /a11y\.spec\.ts/],
       use: { ...devices["Desktop Chrome"] },
     },
     {
@@ -43,6 +41,11 @@ export default defineConfig({
         viewport: { width: 1280, height: 720 },
         deviceScaleFactor: 1,
       },
+    },
+    {
+      name: "a11y",
+      testMatch: /a11y\.spec\.ts/,
+      use: { ...devices["Desktop Chrome"] },
     },
   ],
   webServer: process.env.PLAYWRIGHT_BASE_URL
