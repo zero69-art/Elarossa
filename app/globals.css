@@ -32,6 +32,17 @@ button:disabled { cursor: not-allowed; }
 .serif { font-family: Georgia, "Times New Roman", serif; }
 ::selection { background: var(--ink); color: #fff; }
 
+/* Hard guarantee: dark ink surfaces always get light type (fixes invisible CTA labels) */
+.announcement-bar,
+.cta-ink {
+  background-color: #201b1b !important;
+  color: #ffffff !important;
+}
+.cta-ink:hover {
+  background-color: #ffffff !important;
+  color: #201b1b !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
