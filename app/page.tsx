@@ -54,7 +54,7 @@ export default function Home() {
             </p>
             <Link
               href="/shop"
-              className="mt-7 inline-flex min-h-12 items-center bg-[#201b1b] px-6 text-[10px] font-semibold tracking-[.18em] transition hover:bg-white hover:text-[#201b1b]"
+              className="cta-ink mt-7 inline-flex min-h-12 items-center px-6 text-[10px] font-semibold tracking-[.18em] transition"
             >
               SHOP THE EDIT <span className="ml-5">→</span>
             </Link>
@@ -166,7 +166,7 @@ export default function Home() {
         <div className="mt-10 text-center">
           <Link
             href="/shop"
-            className="inline-flex min-h-12 items-center bg-[#201b1b] px-7 text-[10px] font-semibold tracking-[.18em] text-white transition hover:bg-[#a65d68]"
+            className="cta-ink inline-flex min-h-12 items-center px-7 text-[10px] font-semibold tracking-[.18em] transition hover:!bg-[#a65d68] hover:!text-white"
           >
             EXPLORE THE COLLECTION →
           </Link>
@@ -199,14 +199,14 @@ export default function Home() {
             ))}
           </div>
         </div>
-        <div className="flex min-h-[360px] flex-col justify-end bg-[#d8c5b7] p-7 sm:p-10">
+        <div className="flex min-h-[360px] flex-col justify-end bg-[#d8c5b7] p-7 text-[#201b1b] sm:p-10">
           <p className="text-[10px] font-semibold tracking-[.28em]">JOIN ELAROSSA</p>
           <h2 className="serif mt-3 text-4xl leading-tight sm:text-5xl">10% off your first order.</h2>
           <p className="mt-4 max-w-sm text-sm leading-6 opacity-70">
             A considered edit, delivered occasionally.
           </p>
           <div className="mt-7">
-            <Newsletter />
+            <Newsletter variant="inline" />
           </div>
         </div>
       </section>
