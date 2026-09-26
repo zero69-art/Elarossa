@@ -7,6 +7,19 @@ test.describe("Elarossa smoke", () => {
     await expect(page.getByRole("link", { name: /Elarossa home/i })).toBeVisible();
   });
 
+  test("primary navigation destinations load", async ({ page }) => {
+    for (const [path, expectedUrl] of [
+      ["/shop", "/products"],
+      ["/active", "/products?category=activewear"],
+      ["/swim", "/products?category=swimwear"],
+      ["/intimates", "/products?category=intimates"],
+    ] as const) {
+      const response = await page.goto(path);
+      expect(response?.ok()).toBeTruthy();
+      await expect(page).toHaveURL(new RegExp(expectedUrl.replace(/[?]/g, "\?")));
+    }
+  });
+
   test("shop lists products", async ({ page }) => {
     await page.goto("/shop");
     await expect(page.getByRole("heading", { name: /Elarossa Edit/i })).toBeVisible();
