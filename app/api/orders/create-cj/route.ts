@@ -3,9 +3,9 @@ import { resolveLineItems, toCjOrderProducts, isStoreLive } from "@/lib/fulfillm
 import { createCjOrder } from "@/lib/cj-orders";
 
 /**
- * Create a CJ fulfillment order from paid cart lines.
- * HARD GATES: store live + approved products + mapped variants.
- * Call only after Stripe payment succeeds (webhook or server confirm).
+ * Manual CJ order create (ops only).
+ * Preferred path is Stripe webhook → fulfillPaidCheckoutSession.
+ * ALWAYS requires FULFILLMENT_SECRET or ADMIN_ACCESS_TOKEN.
  */
 export async function POST(request: Request) {
   if (!isStoreLive()) {
@@ -15,13 +15,23 @@ export async function POST(request: Request) {
     );
   }
 
-  // Optional shared secret so only trusted server/webhook can call
-  const secret = process.env.FULFILLMENT_SECRET?.trim();
-  if (secret) {
-    const auth = request.headers.get("authorization") || "";
-    if (auth !== `Bearer ${secret}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  const fulfillment = process.env.FULFILLMENT_SECRET?.trim();
+  const admin = process.env.ADMIN_ACCESS_TOKEN?.trim();
+  if (!fulfillment && !admin) {
+    return NextResponse.json(
+      { error: "Fulfillment endpoint locked (set FULFILLMENT_SECRET or ADMIN_ACCESS_TOKEN)" },
+      { status: 503 }
+    );
+  }
+
+  const auth = request.headers.get("authorization") || "";
+  const xAdmin = request.headers.get("x-admin-token") || "";
+  const okBearer =
+    (fulfillment && auth === `Bearer ${fulfillment}`) ||
+    (admin && auth === `Bearer ${admin}`);
+  const okHeader = admin && xAdmin === admin;
+  if (!okBearer && !okHeader) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
@@ -33,7 +43,14 @@ export async function POST(request: Request) {
     if (!orderNumber) {
       return NextResponse.json({ error: "orderNumber required" }, { status: 400 });
     }
-    if (!shipping.fullName || !shipping.countryCode || !shipping.city || !shipping.address || !shipping.zip || !shipping.phone) {
+    if (
+      !shipping.fullName ||
+      !shipping.countryCode ||
+      !shipping.city ||
+      !shipping.address ||
+      !shipping.zip ||
+      !shipping.phone
+    ) {
       return NextResponse.json({ error: "Incomplete shipping address" }, { status: 400 });
     }
 

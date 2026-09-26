@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isAdminRequest } from "@/lib/admin";
 import {
   getLogisticsByOrderId,
   getLogisticsByTracking,
@@ -10,18 +11,15 @@ import { getOrderByStripeSession } from "@/lib/order-bridge";
 export const dynamic = "force-dynamic";
 
 /**
- * Read logistics snapshots from CJ LOGISTIC webhooks.
- *
- * GET /api/tracking?orderId=          (CJ order id)
- * GET /api/tracking?tracking=
- * GET /api/tracking?session=cs_...    (Stripe session → CJ order → logistics)
- * GET /api/tracking
+ * Logistics cache reads.
+ * List-all requires admin. Lookup by session / orderId / tracking stays available.
  */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const orderId = searchParams.get("orderId")?.trim();
   const tracking = searchParams.get("tracking")?.trim();
   const session = searchParams.get("session")?.trim();
+  const admin = isAdminRequest(request);
 
   if (session) {
     const bridge = getOrderByStripeSession(session);
@@ -29,26 +27,22 @@ export async function GET(request: Request) {
       return NextResponse.json({
         ok: true,
         found: false,
-        bridge: bridge
-          ? {
-              stripeSessionId: bridge.stripeSessionId,
-              lastStatus: bridge.lastStatus,
-              cjOrderId: bridge.cjOrderId,
-            }
-          : null,
-        note: "No CJ order id linked for this session on this instance",
+        note: "No CJ order linked for this session on this instance",
       });
     }
     const row = getLogisticsByOrderId(bridge.cjOrderId);
     return NextResponse.json({
       ok: true,
       found: Boolean(row),
-      bridge: {
-        stripeSessionId: bridge.stripeSessionId,
-        cjOrderId: bridge.cjOrderId,
-        lastStatus: bridge.lastStatus,
-      },
-      shipment: row ?? null,
+      shipment: row
+        ? {
+            trackingStatus: row.trackingStatus,
+            trackingStatusLabel: row.trackingStatusLabel,
+            trackingNumber: row.trackingNumber,
+            logisticName: row.logisticName,
+            events: admin ? row.events : row.events.slice(-3),
+          }
+        : null,
     });
   }
 
@@ -56,9 +50,16 @@ export async function GET(request: Request) {
     const row = getLogisticsByOrderId(orderId);
     return NextResponse.json({
       ok: true,
-      source: "cj-logistic-webhook-cache",
       found: Boolean(row),
-      shipment: row ?? null,
+      shipment: row
+        ? {
+            trackingStatus: row.trackingStatus,
+            trackingStatusLabel: row.trackingStatusLabel,
+            trackingNumber: row.trackingNumber,
+            logisticName: row.logisticName,
+            events: admin ? row.events : row.events.slice(-3),
+          }
+        : null,
     });
   }
 
@@ -66,17 +67,25 @@ export async function GET(request: Request) {
     const row = getLogisticsByTracking(tracking);
     return NextResponse.json({
       ok: true,
-      source: "cj-logistic-webhook-cache",
       found: Boolean(row),
-      shipment: row ?? null,
+      shipment: row
+        ? {
+            trackingStatus: row.trackingStatus,
+            trackingStatusLabel: row.trackingStatusLabel,
+            trackingNumber: row.trackingNumber,
+            logisticName: row.logisticName,
+          }
+        : null,
     });
+  }
+
+  if (!admin) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
   return NextResponse.json({
     ok: true,
-    source: "cj-logistic-webhook-cache",
     stats: logisticsCacheStats(),
     recent: listRecentLogistics(30),
-    note: "Cache is per serverless instance until Redis is added",
   });
 }

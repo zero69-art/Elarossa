@@ -14,12 +14,15 @@ if (new Set(slugs).size !== slugs.length) errors.push("Duplicate slug detected i
 const sampleRequired = (products.match(/qualityStatus:\s*"sample-required"/g) || []).length;
 const approved = (products.match(/qualityStatus:\s*"approved"/g) || []).length;
 
-if (fs.existsSync("lib/cj-catalog.ts")) {
-  const source = fs.readFileSync("lib/cj-catalog.ts", "utf8");
-  const catalogPids = [...source.matchAll(/pid:\s*"([^"]+)"/g)].map((m) => m[1]);
-  if (catalogPids.length && new Set(catalogPids).size !== catalogPids.length) {
-    errors.push("Duplicate PID in lib/cj-catalog.ts");
-  }
+// Also scan split SKU modules if present
+for (const extra of ["lib/products-new-skus.ts", "lib/products-mid-skus.ts"]) {
+  if (!fs.existsSync(extra)) continue;
+  const src = fs.readFileSync(extra, "utf8");
+  const extraSlugs = [...src.matchAll(/slug:\s*"([^"]+)"/g)].map((m) => m[1]);
+  slugs.push(...extraSlugs);
+}
+if (new Set(slugs).size !== slugs.length) {
+  errors.push("Duplicate slug across products modules");
 }
 
 if (errors.length) {
@@ -29,5 +32,5 @@ if (errors.length) {
 }
 
 console.log(
-  `Catalog integrity OK: ${slugs.length} products, ${pids.length} CJ PIDs, ${sampleRequired} sample-required, ${approved} approved.`
+  `Catalog integrity OK: ${slugs.length} product slug refs, ${pids.length} CJ PIDs in products.ts, ${sampleRequired} sample-required, ${approved} approved.`
 );

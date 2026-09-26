@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isAdminRequest } from "@/lib/admin";
 import {
   getOrderByStripeSession,
   getOrderByCjId,
@@ -10,16 +11,15 @@ import { getLogisticsByOrderId } from "@/lib/cj-logistics-cache";
 export const dynamic = "force-dynamic";
 
 /**
- * Lookup Stripe↔CJ order bridge (+ logistics if known).
- *
- * GET /api/orders/lookup?session=cs_...
- * GET /api/orders/lookup?cjOrderId=
- * GET /api/orders/lookup  (stats + recent; admin-ish — no secrets returned)
+ * Lookup Stripe↔CJ bridge.
+ * - ?session= / ?cjOrderId= : limited public fields (no email dump in list mode)
+ * - bare GET (recent list): admin only
  */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const session = searchParams.get("session")?.trim();
   const cjOrderId = searchParams.get("cjOrderId")?.trim();
+  const admin = isAdminRequest(request);
 
   if (session) {
     const bridge = getOrderByStripeSession(session);
@@ -33,17 +33,19 @@ export async function GET(request: Request) {
         ? {
             stripeSessionId: bridge.stripeSessionId,
             cjOrderId: bridge.cjOrderId,
-            cjOrderNumber: bridge.cjOrderNumber,
-            paymentStatus: bridge.paymentStatus,
-            email: bridge.email,
-            createdAt: bridge.createdAt,
             lastStatus: bridge.lastStatus,
+            createdAt: bridge.createdAt,
+            ...(admin ? { email: bridge.email, paymentStatus: bridge.paymentStatus } : {}),
           }
         : null,
-      shipment: logistics ?? null,
-      note: bridge
-        ? undefined
-        : "No bridge record on this instance (cold start or not fulfilled here)",
+      shipment: logistics
+        ? {
+            trackingStatus: logistics.trackingStatus,
+            trackingStatusLabel: logistics.trackingStatusLabel,
+            trackingNumber: logistics.trackingNumber,
+            logisticName: logistics.logisticName,
+          }
+        : null,
     });
   }
 
@@ -53,19 +55,32 @@ export async function GET(request: Request) {
     return NextResponse.json({
       ok: true,
       found: Boolean(bridge || logistics),
-      order: bridge ?? null,
-      shipment: logistics ?? null,
+      order: bridge
+        ? {
+            stripeSessionId: bridge.stripeSessionId,
+            cjOrderId: bridge.cjOrderId,
+            lastStatus: bridge.lastStatus,
+            createdAt: bridge.createdAt,
+            ...(admin ? { email: bridge.email } : {}),
+          }
+        : null,
+      shipment: logistics
+        ? {
+            trackingStatus: logistics.trackingStatus,
+            trackingStatusLabel: logistics.trackingStatusLabel,
+            trackingNumber: logistics.trackingNumber,
+          }
+        : null,
     });
+  }
+
+  if (!admin) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
   return NextResponse.json({
     ok: true,
     stats: orderBridgeStats(),
-    recent: listRecentOrders(20).map((o) => ({
-      stripeSessionId: o.stripeSessionId,
-      cjOrderId: o.cjOrderId,
-      lastStatus: o.lastStatus,
-      createdAt: o.createdAt,
-    })),
+    recent: listRecentOrders(20),
   });
 }
