@@ -3,10 +3,15 @@ import { products } from "@/lib/products";
 import { setCjWebhookEndpoints, subscribeCjProducts } from "@/lib/cj-webhooks-api";
 
 /**
- * Admin: point CJ stock+product webhooks at this deployment and subscribe catalog PIDs.
+ * Admin: point CJ stock + product + logistics webhooks at this deployment.
  *
  * POST Authorization: Bearer $ADMIN_ACCESS_TOKEN
- * Body optional: { "callbackUrl": "https://…/api/webhooks/cj", "subscribe": true }
+ * Body optional: {
+ *   "callbackUrl": "https://…/api/webhooks/cj",
+ *   "subscribe": true,
+ *   "logistics": true,
+ *   "order": false
+ * }
  */
 export async function POST(request: Request) {
   const admin = process.env.ADMIN_ACCESS_TOKEN?.trim();
@@ -18,7 +23,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { callbackUrl?: string; subscribe?: boolean } = {};
+  let body: {
+    callbackUrl?: string;
+    subscribe?: boolean;
+    logistics?: boolean;
+    order?: boolean;
+    stock?: boolean;
+    product?: boolean;
+  } = {};
   try {
     body = await request.json();
   } catch {
@@ -39,10 +51,10 @@ export async function POST(request: Request) {
 
   try {
     const setResult = await setCjWebhookEndpoints(callbackUrl, {
-      stock: true,
-      product: true,
-      order: false,
-      logistics: false,
+      stock: body.stock !== false,
+      product: body.product !== false,
+      order: body.order === true,
+      logistics: body.logistics !== false,
     });
 
     let subscribeResult = null;
@@ -54,9 +66,15 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       callbackUrl,
+      topics: {
+        stock: body.stock !== false,
+        product: body.product !== false,
+        logistics: body.logistics !== false,
+        order: body.order === true,
+      },
       setResult,
       subscribeResult,
-      hint: "Set CJ_OPEN_ID on Vercel (openId from getAccessToken) so /api/webhooks/cj can verify the sign header.",
+      hint: "Set CJ_OPEN_ID on Vercel (openId from getAccessToken). Logistics updates: GET /api/tracking?orderId=",
     });
   } catch (e) {
     console.error("[cj-webhooks/register]", e);
