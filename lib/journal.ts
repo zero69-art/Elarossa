@@ -58,7 +58,7 @@ export const journalPosts: JournalPost[] = [
       "Then leave space. A capsule wardrobe should evolve with you rather than become another set of rules.",
     ],
     image:
-      "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1550345332-09e3ac987658?auto=format&fit=crop&w=1400&q=85",
   },
   {
     slug: "the-elarossa-edit",

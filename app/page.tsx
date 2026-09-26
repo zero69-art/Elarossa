@@ -6,13 +6,13 @@ import ServiceBar from "@/components/ServiceBar";
 import Newsletter from "@/components/Newsletter";
 import { journalPosts } from "@/lib/journal";
 
-/** Campaign imagery — women’s movement / studio / resort (verified Unsplash). */
+/** Campaign imagery — women only (activewear / swim / soft). Verified Unsplash. */
 const moods = [
   {
     title: "ACTIVE",
     href: "/active",
     image:
-      "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&w=1200&q=85",
   },
   {
     title: "SWIM",
@@ -39,8 +39,8 @@ export default function Home() {
       >
         <div className="relative min-h-[610px] overflow-hidden bg-[#cbb9ad] sm:min-h-[700px] lg:min-h-[760px]">
           <img
-            src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=1800&q=85"
-            alt="Woman training in activewear — Elarossa campaign"
+            src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1800&q=85"
+            alt="Women in yoga activewear — Elarossa campaign"
             className="absolute inset-0 h-full w-full object-cover object-center"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
@@ -75,8 +75,8 @@ export default function Home() {
               </Link>
             </div>
             <img
-              src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1000&q=85"
-              alt="Woman in yoga flow — movement edit"
+              src="https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&w=1000&q=85"
+              alt="Woman in sports bra and shorts — strength edit"
               className="h-full w-full object-cover"
             />
           </div>
